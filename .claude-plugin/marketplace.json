@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "nikko-marketplace",
+  "owner": { "name": "Nikko", "email": "nikkolte@gmail.com" },
+  "description": "Personal catalog of Claude Code plugins.",
+  "plugins": [
+    {
+      "name": "demo-tools",
+      "source": "./plugins/demo-tools",
+      "description": "Starter plugin: a hello skill and a code-explainer agent."
+    }
+  ]
+}

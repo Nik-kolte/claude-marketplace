@@ -1,0 +1,6 @@
+{
+  "name": "demo-tools",
+  "description": "Starter plugin with one skill and one agent.",
+  "version": "0.1.0",
+  "author": { "name": "Nikko" }
+}
