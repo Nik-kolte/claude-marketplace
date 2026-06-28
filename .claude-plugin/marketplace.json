@@ -19,5 +19,11 @@
       "source": "./plugins/trade-reflect",
       "description": "Intelligent self-improvement brain (reflect skill) for the cloud paper-trading worker: reasons over recent trades and evolves strategy.yaml one variable per cycle."
     }
+    ,
+    {
+      "name": "personal",
+      "source": "./plugins/personal",
+      "description": "Personal productivity: CC statement parsing and expense categorisation."
+    }
   ]
 }

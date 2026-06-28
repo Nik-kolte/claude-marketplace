@@ -1,0 +1,155 @@
+{
+  "categories": [
+    "Food/Home Stuff",
+    "Dining and Alcohol",
+    "Flights/Stay/Travel",
+    "Activities",
+    "Shopping",
+    "Other",
+    "EMI",
+    "Subscriptions",
+    "Surplus Investment"
+  ],
+  "exclusions": [
+    "bbps payment received",
+    "fuel cashback rebates",
+    "cashback rebate",
+    "opening balance",
+    "payment received"
+  ],
+  "vendors": {
+    "Zepto": {
+      "patterns": ["zepto"],
+      "category": "Food/Home Stuff",
+      "notes": "Grocery quick-commerce. All variants: ZEPTO MARKETPLACE PRIV, Zepto Marketplace Private, ZEPTONOW, PHP*Zepto"
+    },
+    "Blinkit": {
+      "patterns": ["blinkit", "blink commerce"],
+      "category": "Food/Home Stuff",
+      "notes": "Grocery quick-commerce. BLINK COMMERCE PVT LTD = Blinkit"
+    },
+    "Spencer's Retail": {
+      "patterns": ["spencers retail", "spencer's retail"],
+      "category": "Food/Home Stuff",
+      "notes": "Supermarket chain"
+    },
+    "Swiggy": {
+      "patterns": ["swiggy"],
+      "category": "Dining and Alcohol",
+      "notes": "Food delivery. Swiggy Instamart (grocery) also appears as Swiggy on statement — cannot distinguish automatically"
+    },
+    "Zomato": {
+      "patterns": ["zomato"],
+      "category": "Dining and Alcohol"
+    },
+    "EazyDiner": {
+      "patterns": ["eazydiner"],
+      "category": "Dining and Alcohol",
+      "notes": "Restaurant reservation / dining experiences"
+    },
+    "House of Commons": {
+      "patterns": ["house of commons"],
+      "category": "Dining and Alcohol",
+      "notes": "Bar/pub, Bangalore"
+    },
+    "Kasturi Restaurant": {
+      "patterns": ["kasturi restaurant"],
+      "category": "Dining and Alcohol"
+    },
+    "Big Cup": {
+      "patterns": ["big cup"],
+      "category": "Dining and Alcohol",
+      "notes": "Cafe, Madikeri"
+    },
+    "Sakkare & Smoor": {
+      "patterns": ["sakkare", "smoor"],
+      "category": "Dining and Alcohol",
+      "notes": "Dessert/cafe, Bangalore"
+    },
+    "Bistro": {
+      "patterns": ["bistro"],
+      "category": "Dining and Alcohol"
+    },
+    "Air India": {
+      "patterns": ["air india"],
+      "category": "Flights/Stay/Travel",
+      "notes": "BIL*AIR INDIA LTD on statement"
+    },
+    "Indian Railway / IRCTC": {
+      "patterns": ["indian railway", "irctc"],
+      "category": "Flights/Stay/Travel"
+    },
+    "Travelogy": {
+      "patterns": ["travelogy"],
+      "category": "Flights/Stay/Travel",
+      "notes": "Travel agency"
+    },
+    "SPPL Hotels": {
+      "patterns": ["sppl hotels"],
+      "category": "Flights/Stay/Travel"
+    },
+    "Uber": {
+      "patterns": ["uber india", "uber"],
+      "category": "Flights/Stay/Travel"
+    },
+    "Amazon": {
+      "patterns": ["amazon", "asspl"],
+      "category": "Shopping",
+      "notes": "ASSPL = Amazon Seller Services Pvt Ltd (same as Amazon)"
+    },
+    "Vishal Mega Mart": {
+      "patterns": ["vishal mega mart"],
+      "category": "Shopping"
+    },
+    "Anthropic Claude": {
+      "patterns": ["anthropic"],
+      "category": "Subscriptions"
+    },
+    "Netflix": {
+      "patterns": ["netflix"],
+      "category": "Subscriptions"
+    },
+    "YouTube": {
+      "patterns": ["youtube"],
+      "category": "Subscriptions"
+    },
+    "Apple": {
+      "patterns": ["apple disi", "apple di si"],
+      "category": "Subscriptions",
+      "notes": "iCloud / Apple One"
+    },
+    "Google Play": {
+      "patterns": ["google play"],
+      "category": "Subscriptions"
+    },
+    "Atria Convergence": {
+      "patterns": ["atria convergence"],
+      "category": "Subscriptions",
+      "notes": "Internet service provider"
+    },
+    "Savesage Solutions": {
+      "patterns": ["savesage"],
+      "category": "Subscriptions"
+    },
+    "Bhattacharyya": {
+      "patterns": ["bhattacharyya"],
+      "category": "Other",
+      "notes": "Medical: X-ray and orthopaedic, Kolkata"
+    },
+    "Mira Service Station": {
+      "patterns": ["mira service station"],
+      "category": "Other",
+      "notes": "Fuel"
+    },
+    "Agarwalla Auto Service": {
+      "patterns": ["agarwalla auto"],
+      "category": "Other",
+      "notes": "Car servicing"
+    },
+    "Eliteassist Technology": {
+      "patterns": ["eliteassist"],
+      "category": "Other",
+      "notes": "Credit card concierge/service charge, usually ₹2"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "personal",
+  "description": "Personal productivity skills: CC statement parsing and expense categorisation.",
+  "version": "0.1.0",
+  "author": { "name": "Nikko" }
+}
