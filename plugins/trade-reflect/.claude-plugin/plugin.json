@@ -1,0 +1,6 @@
+{
+  "name": "trade-reflect",
+  "description": "Intelligent self-improvement brain for the cloud paper-trading worker (trade-research / Railway). The `reflect` skill reads the worker's recent trades + current strategy from its Railway volume, reasons about WHY trades are failing (regime, session, FVG filter, RR, sizing), changes exactly ONE strategy variable, snapshots history, logs the hypothesis, and pushes the change back so the live worker picks it up. Runs on-demand in Claude Code, or unattended via the cloud reflector (Claude Code headless on a Railway cron).",
+  "version": "0.1.0",
+  "author": { "name": "Nikko" }
+}

@@ -8,6 +8,16 @@
       "name": "demo-tools",
       "source": "./plugins/demo-tools",
       "description": "Starter plugin: a hello skill and a code-explainer agent."
+    },
+    {
+      "name": "trading",
+      "source": "./plugins/trading",
+      "description": "TradingView analysis & strategy-development agent (tv-analyst) driven by the TradingView MCP."
+    },
+    {
+      "name": "trade-reflect",
+      "source": "./plugins/trade-reflect",
+      "description": "Intelligent self-improvement brain (reflect skill) for the cloud paper-trading worker: reasons over recent trades and evolves strategy.yaml one variable per cycle."
     }
   ]
 }
