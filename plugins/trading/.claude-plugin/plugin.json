@@ -1,0 +1,6 @@
+{
+  "name": "trading",
+  "description": "TradingView analysis & strategy-development tooling. Ships the tv-analyst agent plus the night-watch (observe-only live-session journaling) and strategy-study (weekly propose-only improvement review) skills, all driven by the TradingView MCP.",
+  "version": "0.2.0",
+  "author": { "name": "Nikko" }
+}
