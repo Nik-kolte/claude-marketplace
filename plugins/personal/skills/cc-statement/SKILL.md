@@ -124,9 +124,11 @@ Keep the in-context table state current after every change.
 
 Only when the user explicitly asks ("create csv", "export", "save as csv", etc.):
 
-1. Default path: same folder as the PDF, named `expenses_<MonYYYY>.csv`
-2. Write with header: `Date,Description,Expense,Category`
-3. Confirm the path written
+1. Output path: always `d:\projects\repos\claude\documents\` — never write to `context/`
+2. Default filename: `expenses_<MonYYYY>.csv` (or a descriptive variant if the user split the table)
+3. Write with header: `Date,Description,Expense,Category`
+4. **Category column must be the number (1–9)**, not the label text
+5. Confirm the path written
 
 ---
 
@@ -147,14 +149,16 @@ Example of a good notes value: `"Medical imaging clinic, Kolkata"` or `"Quick-se
 
 ## Category reference
 
-| # | Label |
-|---|---|
-| 1 | Food/Home Stuff |
-| 2 | Dining and Alcohol |
-| 3 | Flights/Stay/Travel |
-| 4 | Activities |
-| 5 | Shopping |
-| 6 | Other |
-| 7 | EMI |
-| 8 | Subscriptions |
-| 9 | Surplus Investment |
+| # | Label | Typical vendors |
+|---|---|---|
+| 1 | Food/Home Stuff | Zepto, Blinkit, Spencer's, Big Basket |
+| 2 | Dining and Alcohol | Zomato, Swiggy, restaurants, bars, cafes |
+| 3 | Flights/Stay/Travel | Air India, IRCTC, hotels, Uber, Ola |
+| 4 | Activities | Events, experiences, recreation |
+| 5 | Shopping | Amazon, retail stores |
+| 6 | Other | Medical, fuel, car service, bank fees |
+| 7 | EMI | Loan repayments |
+| 8 | Subscriptions | Netflix, Spotify, Claude, internet, Apple |
+| 9 | Surplus Investment | Mutual funds, stocks, savings |
+
+The CSV `Category` column always stores the number, never the label text.
