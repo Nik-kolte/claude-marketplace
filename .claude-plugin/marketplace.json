@@ -12,7 +12,7 @@
     {
       "name": "trading",
       "source": "./plugins/trading",
-      "description": "TradingView analysis & strategy-development agent (tv-analyst) driven by the TradingView MCP."
+      "description": "TradingView analysis & strategy-development agent (tv-analyst) plus the strategy research-to-deployment pipeline (strategy-optimize, strategy-deploy), driven by the TradingView MCP."
     },
     {
       "name": "trade-reflect",
@@ -24,6 +24,12 @@
       "name": "personal",
       "source": "./plugins/personal",
       "description": "Personal productivity: CC statement parsing and expense categorisation."
+    }
+    ,
+    {
+      "name": "gold-strategy-research",
+      "source": "./plugins/gold-strategy-research",
+      "description": "Autonomous XAUUSD strategy-research loop: resume/review the Optuna search and milestones, course-correct toward the 4%/mo @ 8%-maxDD goal from compact state."
     }
   ]
 }
