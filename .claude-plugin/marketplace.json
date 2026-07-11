@@ -31,5 +31,11 @@
       "source": "./plugins/gold-strategy-research",
       "description": "Autonomous XAUUSD strategy-research loop: resume/review the Optuna search and milestones, course-correct toward the 4%/mo @ 8%-maxDD goal from compact state."
     }
+    ,
+    {
+      "name": "engineering",
+      "source": "./plugins/engineering",
+      "description": "Token-aware, repo-agnostic software-development lifecycle for a solo dev: architect/developer/reviewer/tester/devops agents orchestrated by phase skills (stage-prep, implement, test, deploy, regression) with the human as a control gate."
+    }
   ]
 }
