@@ -49,7 +49,16 @@ and nothing regressed.
 
 Repeat test → sign-off → fix → re-test until the tester returns PASS and the human signs off to proceed.
 
-## Step 4 — Hand off
+## Step 4 — Hand off & grow the regression checklist
 
-On a signed-off PASS, update the stage's Execution Log with the test outcome and tell the human the next
-phase is **`engineering:deploy`**.
+On a signed-off PASS:
+- Update the stage's Execution Log with the test outcome.
+- **Append this stage's key verified condition(s) to the durable regression checklist** — a **committed**
+  file in the repo's tracker/docs (default `regression-checklist.md`, or a section of the stage tracker),
+  **never** the ephemeral `.engineering/` dir (that's per-stage and gitignored). A clean PASS is exactly when
+  you *know* the condition holds, so this is where the suite grows — one terse, runnable check per stage
+  (endpoint/request + what "good" looks like), not a re-test script. Create the file if it doesn't exist yet.
+- Tell the human the next phase is **`engineering:deploy`**.
+
+Growing the checklist here (not at deploy) means `engineering:regression` later just **reads and runs** it —
+it never has to re-derive the cases, and a stage that isn't deployed still contributes its condition.
