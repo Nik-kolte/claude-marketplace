@@ -15,21 +15,23 @@ Reuse the stage's **`profile.md`** if one exists (health endpoint, key routes, r
 re-discovering; the tester reads it. Determine the target environment from the caller or ask: **local**
 (running dev server / local DB) or a **deployed** URL. Get the base URL/health endpoint for that target.
 
-## Step 1 — Load the checklist (read, don't re-derive)
+## Step 1 — Load the suite (read, don't re-derive)
 
-Read the durable regression checklist — a **committed** file in the repo's tracker/docs (default
-`regression-checklist.md`, or a section of the stage tracker), **never** the ephemeral `.engineering/` dir
-(that's per-stage and gitignored). `engineering:test` grows this file by one condition on each stage's clean
-PASS, so the normal path here is simply **read it and run it** — you do not re-figure-out the cases. Only if
-no checklist exists yet (a repo that predates this convention) do you bootstrap a minimal one from what's been
-built so far (health endpoint, the key API(s) of each completed stage, tenancy isolation where applicable)
-and note that you created it.
+The durable regression coverage is, preferably, the **committed automated test suite** the tester built up
+across stages — plus a `regression-checklist.md` (or a section of the stage tracker) for any conditions not
+worth automating. Both are **committed** files, **never** the ephemeral `.engineering/` dir (that's per-stage
+and gitignored). `engineering:test` grows them on each stage's clean PASS, so the normal path here is simply
+**run the suite and read/run the checklist** — you do not re-figure-out the cases. Only if neither exists yet
+(a repo that predates this convention) do you bootstrap a minimal checklist from what's been built so far
+(health endpoint, the key API(s) of each completed stage, tenancy isolation where applicable) and note that
+you created it.
 
 ## Step 2 — Run it
 
-Dispatch **`engineering:tester`** (model: `sonnet`), handing it `profile.md` if present, to execute each
-checklist item against the target and return a single **PASS/FAIL** report: per item, the check performed and the actual result; for any FAIL, the
-concrete repro and expected-vs-actual.
+Dispatch **`engineering:tester`** (model: `sonnet`), handing it `profile.md` if present, to **run the
+automated test suite** and execute each remaining checklist item against the target, returning a single
+**PASS/FAIL** report: per suite/item, the check performed and the actual result; for any FAIL, the concrete
+repro and expected-vs-actual.
 
 ## Step 3 — Report (growth is owned by `test`)
 

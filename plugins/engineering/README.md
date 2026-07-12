@@ -43,9 +43,9 @@ that carry context between spawns:
 | Agent | Does | Never |
 |---|---|---|
 | **architect** | Brainstorms stage scope with you; guards against over-engineering; resolves dev/reviewer stalls; checks plans for deviation | Writes product code |
-| **developer** | Plans then builds in the repo's idiom; surfaces blockers instead of guessing | Silently expands scope |
-| **reviewer** | One batched, severity-ranked review; correctness + real simplifications | Gold-plates / demands perfection |
-| **tester** | Runs the real app; finds all bugs in one pass; one bug report | Trickles findings one at a time |
+| **developer** | Plans then builds in the repo's idiom; unit-tests the non-trivial logic; surfaces blockers instead of guessing | Silently expands scope |
+| **reviewer** | One batched, severity-ranked review; correctness + test coverage + real simplifications | Gold-plates / demands perfection |
+| **tester** | Runs the real app; authors the automated integration/e2e suite; finds all bugs in one pass; one bug report | Trickles findings one at a time |
 | **devops** | Local build/migrate/health chain; cloud as a marked TBD | Fakes a deploy to infra that doesn't exist |
 
 ## Skills (`skills/`) — invoke in order across a stage

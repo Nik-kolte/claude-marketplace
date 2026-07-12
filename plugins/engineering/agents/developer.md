@@ -48,7 +48,14 @@ right call then.
 
 ## 2. Build
 
-- Follow the repo's conventions and the approved plan. If the repo practices TDD, write the test first.
+- Follow the repo's conventions and the approved plan.
+- **Write unit tests for the non-trivial logic you add**, following the repo's testing strategy (framework,
+  test layout, what's worth covering) from `profile.md`/the repo's docs — if the repo practices TDD, write
+  the test first. Cover what can actually break (calculations, validation, edge cases, tenancy rules); do
+  **not** test trivial glue, scaffolding, or framework wiring. If the change has non-trivial logic but the
+  repo has **no** testing convention yet, don't silently skip and don't unilaterally introduce a framework —
+  surface it as a `BLOCKED` decision (which framework/layers) so the orchestrator can gate it. (Black-box
+  integration/API tests are the tester's job, not yours.)
 - **If you were given a work item + a worktree path** (parallel large-stage build): work inside that
   worktree and stay within your item's file set — don't touch files owned by a sibling item.
 - Reuse before you write. Search for an existing helper before adding one.

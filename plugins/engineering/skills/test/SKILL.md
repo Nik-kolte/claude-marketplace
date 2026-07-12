@@ -27,6 +27,8 @@ itself to a durable path in the working dir (e.g. `bugs-N.md`) plus a thin workl
 - key APIs for this stage: status, shape, and **data correctness** (right rows/values, not just 200),
 - **data integrity & tenancy isolation** (query the DB directly; confirm one tenant can't see another's
   data where applicable),
+- **codify those black-box checks as committed automated tests** (per the repo's testing strategy) so they
+  persist as the regression suite — plus a manual/exploratory pass for what isn't worth automating,
 - UI flows **only if** there's real UI worth testing (recommend the Playwright upgrade in the report when
   the product reaches that point — don't stand it up prematurely).
 
@@ -53,12 +55,13 @@ Repeat test → sign-off → fix → re-test until the tester returns PASS and t
 
 On a signed-off PASS:
 - Update the stage's Execution Log with the test outcome.
-- **Append this stage's key verified condition(s) to the durable regression checklist** — a **committed**
-  file in the repo's tracker/docs (default `regression-checklist.md`, or a section of the stage tracker),
-  **never** the ephemeral `.engineering/` dir (that's per-stage and gitignored). A clean PASS is exactly when
-  you *know* the condition holds, so this is where the suite grows — one terse, runnable check per stage
-  (endpoint/request + what "good" looks like), not a re-test script. Create the file if it doesn't exist yet.
+- **Grow the durable regression coverage.** Preferably the stage's key conditions were already committed as
+  **automated tests** (the tester's integration/e2e tests) — those *are* the regression suite. For anything
+  not worth automating, append a terse runnable check to the committed `regression-checklist.md` (or a
+  section of the stage tracker) — both live in the repo's committed docs/tests, **never** the ephemeral
+  `.engineering/` dir. A clean PASS is exactly when you *know* the condition holds, so this is where coverage
+  grows — roughly one condition per stage.
 - Tell the human the next phase is **`engineering:deploy`**.
 
-Growing the checklist here (not at deploy) means `engineering:regression` later just **reads and runs** it —
-it never has to re-derive the cases, and a stage that isn't deployed still contributes its condition.
+Growing coverage here (not at deploy) means `engineering:regression` later just **runs the suite** — it never
+re-derives the cases, and a stage that isn't deployed still contributes its coverage.

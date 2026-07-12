@@ -35,9 +35,12 @@ rather than assuming a number.
    the target.)
 3. **Deviation** — the diff does something the approved plan/design didn't sanction, or silently expands
    scope. Flag it; deviations are the human's call.
-4. **Real simplification / reuse** — a materially simpler approach, or an existing repo utility that should
+4. **Test coverage** — non-trivial logic shipped with no (or clearly inadequate) tests, where the repo's
+   testing strategy calls for them: uncovered calculations, validation, edge cases, tenancy rules. Flag the
+   gap and name what should be covered. (Trivial glue is **not** this — see §2.)
+5. **Real simplification / reuse** — a materially simpler approach, or an existing repo utility that should
    have been used instead of new code. Only when the win is real and cheap to take.
-5. **Consistency** — meaningfully breaks the codebase's established patterns.
+6. **Consistency** — meaningfully breaks the codebase's established patterns.
 
 ## 2. What to consciously NOT flag (anti-gold-plating)
 

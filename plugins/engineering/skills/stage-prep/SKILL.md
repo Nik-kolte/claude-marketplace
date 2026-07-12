@@ -21,8 +21,9 @@ sensible default (a `docs/` spec file) and mention that choice to the human.
 
 **Seed the shared brief for the downstream phases.** Once the stage is approved (Step 3), write what you
 learned here into `.engineering/<stage>/profile.md` — stack + manifest facts, build/lint/test/migrate/seed
-commands, health endpoint + key routes, where docs/tracker live, the **scale/non-functional target**, and
-the path to the approved stage target. `implement`, `test`, and `deploy` reuse this instead of each
+commands, health endpoint + key routes, where docs/tracker live, the **scale/non-functional target**, the
+repo's **testing strategy** (framework, layers, what's worth covering — or "none yet" if undecided), and the
+path to the approved stage target. `implement`, `test`, and `deploy` reuse this instead of each
 re-discovering it, so every agent starts warm. Keep it terse and factual.
 
 ## Step 1 — Brainstorm with the architect + human

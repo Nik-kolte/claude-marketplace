@@ -19,8 +19,9 @@ by pasting big content into your own context:
 
 - **`profile.md`** — the **stable project brief, written once and read by every agent**: stack + manifest
   facts, build/lint/test/migrate/seed commands, health endpoint + key routes, where docs/tracker live, the
-  discovered **scale/non-functional target**, and the path to the approved stage target. This is what kills
-  the repeated "project-profile discovery." (`stage-prep` may have already seeded it — reuse it.)
+  discovered **scale/non-functional target**, the repo's **testing strategy** (framework, layers, what's
+  worth covering — or "none yet"), and the path to the approved stage target. This is what kills the repeated
+  "project-profile discovery." (`stage-prep` may have already seeded it — reuse it.)
 - **`worklog.md`** — the **append-only board** (a lightweight Jira ticket). It holds: a header (stage target
   + links), an optional **work-items** table when the stage is decomposed, and a chronological **activity
   log** where **each agent appends its own thin entry** (outcome + a pointer to its detail artifact — never a

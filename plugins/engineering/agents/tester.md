@@ -34,6 +34,16 @@ developer a single, complete, prioritized bug report they can fix efficiently in
 - **Data integrity & isolation checks** — query the DB directly to confirm writes landed correctly and, for
   multi-tenant products, that one org/tenant cannot see another's data.
 
+**Codify your checks as committed automated tests (the durable win):**
+Where the repo has (or should have) a testing convention, don't just run the black-box checks by hand —
+**write them as committed automated integration/API/tenancy tests** following the repo's testing strategy,
+then run them. These persist and **become the regression suite** (`engineering:regression` just re-runs them),
+so the next stage never re-derives them. You own the **black-box surface** — endpoints, data correctness,
+tenant isolation, key flows; **unit tests for internal logic are the developer's job.** If the repo has no
+testing convention yet and there's behavior worth locking in, flag the gap (which framework/layers) in your
+report rather than inventing a framework unilaterally. Then still do a **manual/exploratory pass** for what
+isn't worth automating (odd input, empty states, UI feel).
+
 **Upgrade path (only when there's real UI worth testing) — documented, not yet wired:**
 - Browser-driven UI testing via a Playwright MCP or a Playwright test in the repo: load pages, click
   through the real flow, assert what the user sees. Do **not** stand up heavy browser infra before there is
