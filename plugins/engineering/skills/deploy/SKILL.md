@@ -10,9 +10,10 @@ You run the **release phase**. Nothing deploys without the human's explicit go, 
 
 ## Step 0 — Orient
 
-Project-profile discovery focused on infra: the run/build/migrate/deploy chain, container/db setup, env
-files, and any deploy config (`vercel.json`, CI workflows, Dockerfiles). Confirm the stage passed testing
-and the human signed off (per `engineering:test`). If not, stop.
+Reuse the stage's **`profile.md`** and **`worklog.md`** from the working dir (the run/build/migrate/deploy
+chain, container/db setup, env files, and deploy config are already captured there); the devops agent reads
+that shared context rather than re-discovering it. Confirm the stage passed testing and the human signed off
+(per `engineering:test`). If not, stop.
 
 ## Step 1 — GATE E: human signs off before deploy
 
@@ -22,7 +23,7 @@ exist — see Step 3.
 
 ## Step 2 — Local release chain (available today)
 
-Dispatch **`engineering:devops`** (model: `sonnet`) to:
+Dispatch **`engineering:devops`** (model: `sonnet`), handing it the `profile.md` + `worklog.md` paths, to:
 - bring up local dependencies (e.g. the DB container) on the repo's configured port,
 - run migrations + seed with the repo's own commands,
 - build, start, and **verify health** (hit the health endpoint; expect a real dependency check, not just a

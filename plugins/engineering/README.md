@@ -11,6 +11,21 @@ drift.
 In Claude Code, subagents are stateless workers spawned by a main agent — they can't autonomously loop or
 message each other. So here: **skills orchestrate, agents specialize, and you (the human) sit in the main
 thread as a first-class control gate.** You invoke each phase yourself, so you only pay for the phase you run.
+(This is also why the "team lead" is the `implement` skill itself, not an agent — only the main thread can
+dispatch and sequence developers.)
+
+## Shared context — so agents don't start cold
+
+Each stage keeps an ephemeral working dir (`.engineering/<stage>/`, recommend gitignored) with two files
+that carry context between spawns:
+
+- **`profile.md`** — the stable project brief (stack, build/lint/test/migrate commands, health endpoint, key
+  routes, the discovered scale target). Written **once** (seeded by `stage-prep`) and **read by every
+  agent**, so nobody re-runs project-profile discovery.
+- **`worklog.md`** — an append-only, Jira-like board. **Each agent writes its own thin entry** (outcome + a
+  pointer to its detail artifact) when it finishes; detail lives in linked files (`plan.md`, `review-N.md`,
+  `bugs-N.md`). The orchestrator **reads the worklog to route and never researches the code itself** — the
+  agents own all reading, writing, and authoring.
 
 ## The flow
 
@@ -58,11 +73,14 @@ thread as a first-class control gate.** You invoke each phase yourself, so you o
 ## Token discipline (baked in)
 
 Model tiering per spawn (judgment → `opus`; build/test/ops → `sonnet`; trivial → `haiku`) · file-mediated
-handoffs (artifacts passed by path) · one batched report per review/test pass · loop caps that escalate to
-the architect, not an endless spin · a triage escape-hatch so a one-liner never triggers the full SDLC.
+handoffs through the shared `profile.md` + `worklog.md` (agents read/author their own records by path;
+the orchestrator only routes) · one batched report per review/test pass · loop caps that escalate to the
+architect, not an endless spin · a **three-tier triage** so effort matches size: *trivial* (one dev, no
+ceremony) · *substantial* (serial dev⇄reviewer loop) · *large + splittable* (developers dispatched in
+**parallel** across isolated git worktrees, then reconciled and reviewed once).
 
 ## Repo-agnostic
 
-Every phase starts with a cheap **project-profile discovery** — it reads the target repo's own
-`CLAUDE.md`/`AGENTS.md`/`README`, detects build/test/deploy commands from the manifest, and finds where the
-repo keeps docs and any stage tracker. Nothing is hardcoded to one project.
+A cheap **project-profile discovery** captures the target repo's own `CLAUDE.md`/`AGENTS.md`/`README`, the
+build/test/deploy commands from the manifest, and where the repo keeps docs and any stage tracker — **once**,
+into `profile.md`, which every later agent reuses. Nothing is hardcoded to one project.

@@ -11,15 +11,17 @@ localhost — cheaply and completely — so they never reach a deployed environm
 
 ## Step 0 — Orient
 
-Project-profile discovery (how to run and exercise this app; build/lint/test commands; health endpoint; key
-routes). Read the approved stage target so the tester checks against **intended behavior**, not just
-crashes.
+Reuse the stage's **`profile.md`** and **`worklog.md`** from the `implement` working dir (e.g.
+`.engineering/<stage>/`) — the app's run/exercise commands, health endpoint, and key routes are already
+captured there, and the worklog records what was built. Don't re-run project-profile discovery yourself; the
+tester reads that shared context. If no `profile.md` exists yet, have the tester produce one as its first
+step. Read the approved stage target so the tester checks against **intended behavior**, not just crashes.
 
 ## Step 1 — Run the tester (one complete pass)
 
-Dispatch **`engineering:tester`** (model: `sonnet`) with the stage target and the profile, instructing it
-to **spot every issue in a single pass** and write ONE severity-ranked bug report to a durable path in the
-repo's tracker (e.g. the stage folder), covering:
+Dispatch **`engineering:tester`** (model: `sonnet`) with the `profile.md` + `worklog.md` paths and the stage
+target, instructing it to **spot every issue in a single pass** and write ONE severity-ranked bug report
+itself to a durable path in the working dir (e.g. `bugs-N.md`) plus a thin worklog entry, covering:
 - build + lint clean,
 - health endpoint returns a real dependency check,
 - key APIs for this stage: status, shape, and **data correctness** (right rows/values, not just 200),
@@ -39,10 +41,11 @@ The tester returns **PASS** or **FAIL** with the report path.
 
 ## Step 3 — Fix loop (bugs → back into implement)
 
-For a signed-off bug batch, re-enter **`engineering:implement`** (Step 4 dev↔reviewer loop) with the bug
-report as the work item — same escalation ladder (architect for stalls, human at GATE C for real design
-decisions). When the fixes are review-clean, **return here and re-run the tester** (Step 1) to confirm the
-batch is resolved and nothing regressed.
+For a signed-off bug batch, re-enter **`engineering:implement`** (Step 4 dev↔reviewer loop) with `bugs-N.md`
+as the work item — the same `profile.md` + `worklog.md` carry over, so the developer resumes warm instead of
+re-orienting. Same escalation ladder (architect for stalls, human at GATE C for real design decisions). When
+the fixes are review-clean, **return here and re-run the tester** (Step 1) to confirm the batch is resolved
+and nothing regressed.
 
 Repeat test → sign-off → fix → re-test until the tester returns PASS and the human signs off to proceed.
 

@@ -11,8 +11,9 @@ hasn't broken an old guarantee. It grows by **one condition per stage**, not by 
 
 ## Step 0 — Orient & pick the target
 
-Project-profile discovery. Determine the target environment from the caller or ask: **local** (running dev
-server / local DB) or a **deployed** URL. Get the base URL/health endpoint for that target.
+Reuse the stage's **`profile.md`** if one exists (health endpoint, key routes, run commands) rather than
+re-discovering; the tester reads it. Determine the target environment from the caller or ask: **local**
+(running dev server / local DB) or a **deployed** URL. Get the base URL/health endpoint for that target.
 
 ## Step 1 — Load the checklist
 
@@ -23,8 +24,8 @@ you created it.
 
 ## Step 2 — Run it
 
-Dispatch **`engineering:tester`** (model: `sonnet`) to execute each checklist item against the target and
-return a single **PASS/FAIL** report: per item, the check performed and the actual result; for any FAIL, the
+Dispatch **`engineering:tester`** (model: `sonnet`), handing it `profile.md` if present, to execute each
+checklist item against the target and return a single **PASS/FAIL** report: per item, the check performed and the actual result; for any FAIL, the
 concrete repro and expected-vs-actual.
 
 ## Step 3 — Report & grow
