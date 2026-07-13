@@ -50,6 +50,28 @@ agent (developer, `haiku`/`sonnet`) to produce it — **you don't do discovery y
 links it). Everything you build is measured against this. If there's no approved stage, stop and point the
 human to `engineering:stage-prep`.
 
+## Branching discipline (applies to every step below)
+
+**`master`/`main` is never edited directly — no exceptions.** This repo uses three branch kinds:
+
+| Branch | Cut from | Merges into | Used for |
+|---|---|---|---|
+| `release/<stage>` | `master` | `master` (at deploy) | The whole stage's work. One per stage; `stage-prep` cuts it, or you cut it defensively here if it's missing. |
+| `feature/<description>` | `release/<stage>` | `release/<stage>` | **Every** unit of implement work in an active stage — a single feature, *and* bug fixes found during that stage's own test loop (a bug in `release/<stage>` is still a `feature/` branch, not a `hotfix/` — it hasn't shipped yet). |
+| `hotfix/<description>` | `master` | `master` | A bug in code that's **already on `master`/deployed**, found outside any active stage (e.g. a direct bug report against production, with no `release/<stage>` in play). |
+
+**Before Step 1:** confirm `release/<stage>` exists and is checked out (create it off up-to-date `master` if
+`stage-prep` didn't). If you were dispatched to fix a bug in already-shipped code with no active stage — a
+hotfix — skip the `release/<stage>` machinery entirely: branch `hotfix/<description>` off `master`, and treat
+that as this run's working branch throughout.
+
+**For every developer dispatch** (trivial tier, the serial loop, and each parallel work item alike): create
+`feature/<description>` off the current working branch (`release/<stage>`, or `master` for a hotfix) *before*
+dispatching the developer, and have the developer work on it. When the reviewer returns **APPROVE** or
+**APPROVE-WITH-NITS**, merge the feature branch back (fast-forward if possible, otherwise a merge commit) and
+delete it. Don't batch multiple unrelated units of work onto one feature branch. Note the branch name in the
+worklog entry for that unit of work.
+
 ## Step 1 — Triage (the token escape hatch) — three tiers
 
 Judge the size of the change honestly and pick the lightest tier that fits:
@@ -99,16 +121,19 @@ product*, not gold-plated.
 
 When Step 1 selected the large tier and the developer's plan gave a work-item breakdown with **disjoint file
 sets**:
-1. **Isolate each item.** For each work item, create a worktree so parallel developers don't collide in one
-   working tree: `git worktree add ../.worktrees/<stage>-<id> -b <stage>/<id>`. (This is your infra
-   bookkeeping.)
+1. **Isolate each item.** For each work item, create a worktree on its own `feature/<id>-<description>`
+   branch cut from `release/<stage>`, so parallel developers don't collide in one working tree:
+   `git worktree add ../.worktrees/<stage>-<id> -b feature/<id>-<description> release/<stage>`. (This is
+   your infra bookkeeping — same `feature/` naming and `release/<stage>` base as the serial-tier rule above,
+   just isolated into worktrees because they run concurrently.)
 2. **Dispatch developers concurrently** — one message, multiple `engineering:developer` (`sonnet`) calls,
    each handed `profile.md`, `worklog.md`, its work item, and **its own worktree path**. To avoid corrupting
    the shared board, each parallel developer writes its record to its **own `item-<id>.md`**, not
    `worklog.md`.
 3. **Consolidate.** After they all return, append their per-item outcomes into `worklog.md` (mark each work
-   item `done`), reconcile the worktrees into a single integrated change (merge the item branches back), then
-   remove the worktrees (`git worktree remove …`).
+   item `done`), merge each `feature/<id>-<description>` branch back into `release/<stage>` to reconcile them
+   into a single integrated change, then remove the worktrees (`git worktree remove …`) and delete the merged
+   feature branches.
 4. **One integration review.** Generate the combined diff and run a **single** `engineering:reviewer`
    (`opus`) pass over the integrated result (Step 4, from step 3). Any `CHANGES-NEEDED` findings route back to
    the relevant developer — serially, on the integrated tree, unless the fixes are again cleanly disjoint.
@@ -139,8 +164,23 @@ When the reviewer approves:
 - **Consolidate** the stage file's **Execution Log** from the `worklog.md` entries (what was built, what was
   reused, any decisions taken and by whom, deviations from plan) — the agents already recorded these; you're
   summarizing their entries into the durable doc, not re-deriving them. Reconcile docs with reality.
+- Confirm `release/<stage>` is fully up to date (every `feature/`/`hotfix/` branch for this run merged in and
+  deleted) before handing off — `test` and `deploy` build on this branch next.
 - Tell the human the build is review-clean and the next phase is **`engineering:test`**. Do not test or
   deploy from this skill.
+
+## Step 8 — Self-check: what would make this phase run smoother?
+
+Before handing off, take a quick pass over how this run of implement actually went — how many review rounds
+it took, whether the architect had to step in, whether a developer returned `BLOCKED` or guessed instead of
+reading `profile.md`/`worklog.md`, whether the triage tier (Step 1) was judged right, any branching missteps.
+This is a cheap check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did.
+
+If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's or an
+agent's instructions in this plugin (e.g. "the developer needed 3 rounds because `plan.md` didn't call out a
+deviation the reviewer then caught — tighten Step 2's guidance" or "the trivial-tier bar let something too
+big through — sharpen Step 1's examples"). Present the finding + proposed fix to the human; **don't edit the
+plugin files yourself** — that's a change to the SDLC machinery itself, the human's call.
 
 ## Model tiering (token discipline)
 

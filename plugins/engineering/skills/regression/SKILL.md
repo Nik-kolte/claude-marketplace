@@ -42,3 +42,16 @@ repro and expected-vs-actual.
   backfill that one line and say you did.
 
 Keep it cheap: this should be a fast confidence check, not a full re-test of everything from scratch.
+
+## Step 4 — Self-check: what would make this phase run smoother?
+
+Before handing off, take a quick pass over how this run went — was the target environment ambiguous, was the
+checklist stale or missing a condition it should already have, did the tester have to re-derive anything it
+should have just read. This is a cheap check, not an audit — a couple of bullet points, or "ran clean,
+nothing to flag" if it did.
+
+If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's instructions
+or the committed `regression-checklist.md` itself. Present the finding + proposed fix to the human; **don't
+edit the plugin files yourself** — that's a change to the SDLC machinery itself, the human's call. (Editing
+the repo's own `regression-checklist.md` to fix a stale/wrong line is fine — that's normal maintenance of a
+committed doc, not a change to the plugin.)

@@ -70,3 +70,16 @@ On a signed-off PASS:
 
 Growing coverage here (not at deploy) means `engineering:regression` later just **runs the suite** — it never
 re-derives the cases, and a stage that isn't deployed still contributes its coverage.
+
+## Step 5 — Self-check: what would make this phase run smoother?
+
+Before handing off, take a quick pass over how this run of test actually went — how many test↔fix↔re-test
+rounds it took, whether the tester found something that should have been caught back in `implement`, whether
+a fix round used the right branch (`feature/<description>` off `release/<stage>`, not a `hotfix`). This is a
+cheap check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did.
+
+If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's, the
+tester's, or the developer's instructions in this plugin (e.g. "the same class of bug slipped through twice —
+add it to the tester's standard checklist" or "the fix loop kept missing regressions — tighten Step 3's
+re-test scope"). Present the finding + proposed fix to the human; **don't edit the plugin files yourself** —
+that's a change to the SDLC machinery itself, the human's call.

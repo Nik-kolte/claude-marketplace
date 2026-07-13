@@ -58,6 +58,25 @@ that carry context between spawns:
 4. **`engineering:deploy`** — devops ships it. → GATE E (you sign off before deploy), then regression.
 5. **`engineering:regression`** — the standing smoke checklist; grows one condition per stage.
 
+## Branching (never touch `master`/`main` directly)
+
+| Branch | Cut from | Merges into | Used for |
+|---|---|---|---|
+| `release/<stage>` | `master` | `master` (at deploy, GATE E) | One per stage — everything in it lands here first. Cut by `stage-prep`. |
+| `feature/<description>` | `release/<stage>` | `release/<stage>` | Every unit of `implement` work — a feature, or a bug found in that stage's own test loop. |
+| `hotfix/<description>` | `master` | `master` | A bug in already-shipped `master` code, found outside any active stage. |
+
+Full detail lives in `engineering:implement`'s branching-discipline section; `engineering:deploy` does the
+`release/<stage>` → `master` merge as the production-promotion step.
+
+## Self-check (every skill ends with one)
+
+Each of the five phase skills ends with a quick, cheap retro: what friction showed up in *this* run
+(stalls, re-derived context, wrong triage, a bug that should've been caught earlier), and — only if
+something real surfaced — a concrete proposed fix to a specific agent's or skill's instructions. Findings
+go to the human; **skills never edit the plugin's own files** — that's a process change, same control-gate
+philosophy as everything else here.
+
 ## Control gates (you are the gate)
 
 | Gate | Where | Fires when |

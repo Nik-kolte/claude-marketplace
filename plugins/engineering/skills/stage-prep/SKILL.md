@@ -57,7 +57,27 @@ Once approved, update the repo's docs to reflect the decision **before implement
 Keep it reconciled with reality: if the code has already moved past what an old stage file claims, fix the
 doc.
 
-## Step 4 — Hand off
+## Step 4 — Cut the stage branch
 
-Tell the human the stage is locked and where it's written, and that the next phase is
-**`engineering:implement`**. Do not start implementing from this skill.
+**`master`/`main` is never edited directly — no exceptions.** From an up-to-date `master`, create and check
+out `release/<stage>` (e.g. `release/stage-2`) — this is the branch `implement` will build on for the whole
+stage. If a branch with that name already exists (resuming a stage), check it out instead of recreating it.
+Tell the human which branch you cut. See `engineering:implement`'s branching-discipline section for the full
+strategy (`release/<stage>` → `feature/<description>` → merge; `hotfix/<description>` is the separate path
+for bugs in already-shipped `master` code, not part of this flow).
+
+## Step 5 — Self-check: what would make this phase run smoother?
+
+Before handing off, take a quick pass over how this run of stage-prep actually went — did the architect ↔
+human loop stall or go in circles, was Step 0's discovery missing something `profile.md` should have
+captured, did the human have to correct course more than once. This is a cheap check, not an audit — a few
+bullet points, or "ran clean, nothing to flag" if it did.
+
+If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's or the
+architect's instructions in this plugin. Present the finding + proposed fix to the human; **don't edit the
+plugin files yourself** — that's a change to the SDLC machinery itself, the human's call.
+
+## Step 6 — Hand off
+
+Tell the human the stage is locked, where it's written, and which branch (`release/<stage>`) it lives on,
+and that the next phase is **`engineering:implement`**. Do not start implementing from this skill.

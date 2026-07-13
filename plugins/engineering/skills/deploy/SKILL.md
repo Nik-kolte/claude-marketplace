@@ -27,6 +27,12 @@ testing in general) never carries over. **Preview/staging deploys are different*
 a preview environment is standing-approved as part of the normal test/regression flow and doesn't need a
 fresh ask each time. Only the production gate is absolute.
 
+**Branching:** the stage's work lives on `release/<stage>` (see `engineering:implement`'s branching
+discipline — `master`/`main` is never edited directly). Preview/staging deploys can run directly off
+`release/<stage>`, no merge needed. **Production deploys are what promote the branch**: only once the human
+approves at this gate, merge `release/<stage>` into `master` (fast-forward if possible, otherwise a merge
+commit) — then deploy `master`, not the release branch. That merge *is* the release.
+
 ## Step 2 — Local release chain (available today)
 
 Dispatch **`engineering:devops`** (model: `sonnet`), handing it the `profile.md` + `worklog.md` paths, to:
@@ -59,6 +65,20 @@ green, or exactly what regressed.
 
 ## Step 5 — Record
 
-Update the stage's Execution Log with what was deployed, where, the health/regression results, and any
-remaining TBDs (e.g. "cloud deploy pending Neon provisioning"). Then the stage is operational — hand back to
-the human to decide the next stage (`engineering:stage-prep`).
+Update the stage's Execution Log with what was deployed, where, the health/regression results, whether
+`release/<stage>` was merged to `master` (and if so, that `master` is what's now live), and any remaining
+TBDs (e.g. "cloud deploy pending Neon provisioning"). Then the stage is operational — hand back to the human
+to decide the next stage (`engineering:stage-prep`).
+
+## Step 6 — Self-check: what would make this phase run smoother?
+
+Before handing off, take a quick pass over how this run of deploy actually went — did the human have to
+push back on what was presented at GATE E, did devops hit a platform gotcha that should be baked into its
+instructions, did the release→master merge or the health check surface anything unexpected. This is a cheap
+check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did.
+
+If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's or the
+devops agent's instructions in this plugin (e.g. "devops re-discovered the Hobby-plan git-connect ceiling
+again — it's already documented, so the profile.md reuse rule wasn't followed" or "GATE E's presentation
+missed the migration step, so the human had to ask"). Present the finding + proposed fix to the human;
+**don't edit the plugin files yourself** — that's a change to the SDLC machinery itself, the human's call.
