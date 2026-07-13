@@ -62,6 +62,25 @@ command) and wait for an explicit go — don't infer consent from silence, from 
 from the fact that nothing is stopping you technically. If you're unsure whether a target counts as
 "production" (e.g. an ambiguous alias), stop and ask rather than guessing.
 
+## 1c. Deployment attempt cap — two tries, then stop and ask
+
+**Deploys are quick, deliberate actions, not something to iterate on.** If a deploy attempt fails, is
+blocked, or doesn't reach a healthy `READY` state, you get **one retry** (two attempts total) using a
+different, genuinely-diagnosed approach — not a blind repeat of the same command hoping it works this time.
+If the second attempt also doesn't land cleanly, **stop and report back to the human**: what you tried
+(both attempts, with the exact commands and outcomes), your best read on why it's not working, and what you'd
+need to proceed. Do not keep trying more variations, workarounds, or "let me just also try X" on your own —
+that's exactly the kind of open-ended fiddling with the environment this cap exists to prevent. This is
+separate from, and doesn't relax, the loop caps in `engineering:implement`'s dev↔reviewer cycle — it's about
+your own deploy actions specifically.
+
+A blocked/failed *first* attempt is exactly when to diagnose before retrying — check deployment state and
+build/runtime logs (not just "it's taking a while"), confirm you're not hitting a known platform ceiling
+already documented below (git auto-deploy limitations, the wrong account, an SSO wall), and only then decide
+what the second attempt should do differently. If you already know the first approach can't work (e.g. it's
+the same git-auto-deploy path that's already documented as broken for this project), don't burn a try
+repeating it — go straight to the different approach and treat that as attempt one.
+
 ## 2. Cloud deployment (TBD until provisioned — do not fake it)
 
 Cloud deploy (e.g. Vercel + a hosted Postgres like Neon) is **only real once the resources are actually
@@ -97,15 +116,21 @@ platform behaviors worth knowing up front instead of re-discovering by trial and
   chase the second one as a separate permissions bug — it's the same Hobby-plan ceiling. Surface the
   tradeoff to the human (upgrade to Pro, make the repo public, or skip git auto-deploy) rather than
   guessing which they'd prefer or retrying connect variations.
-- **Two ways to deploy without git linkage** — useful when git auto-deploy is blocked, or when the human
-  wants to avoid CLI/git-identity entanglement entirely:
-  - `vercel --prod --yes` (CLI) uploads the local source directly and builds/deploys it.
-  - The Vercel Claude Code plugin's `deploy_to_vercel` MCP tool does the same without any CLI or git
-    involvement at all: pass it the working-tree file contents directly (so uncommitted changes go out
-    too — it deploys what's on disk, not a git ref) and a project `name`; if that name matches an
-    existing project, it deploys into it and reuses its already-configured env vars rather than creating
-    a duplicate. Good default when the human has flagged CLI/git as unwanted for this step.
-  Neither gives deploy-on-push — say so explicitly when reporting either one.
+- **Prefer the `deploy_to_vercel` MCP tool over the CLI when a repo is Hobby-plan + private-org-owned.**
+  Confirmed on this project (2026-07-13): repeated `vercel --yes`/`vercel --prod --yes` CLI deploys landed
+  in `BLOCKED` state and never built (build time `0ms`, no build-log events at all — a pre-build block, not
+  a slow build) — the CLI auto-attaches local git commit metadata to every deployment, which trips the same
+  Hobby-plan private-org-repo restriction described above even on a plain CLI deploy with no git push
+  involved. The Vercel Claude Code plugin's **`deploy_to_vercel`** MCP tool built and deployed the identical
+  code successfully on the first attempt: pass it the working-tree file contents directly (source files
+  only — Vercel installs deps and builds; skip `package-lock.json`/lockfiles for context size and skip
+  binary assets like `favicon.ico` unless truly needed) and a project `name`; if that name matches an
+  existing project, it deploys into it and reuses its already-configured env vars rather than creating a
+  duplicate. It never touches git at all, so it structurally cannot trip the git-identity check. **Use this
+  as the default deploy method for any Vercel project on Hobby + a private org repo** — fall back to the CLI
+  only if this tool is unavailable, and if you do, watch for the same `BLOCKED`/zero-build-log symptom
+  rather than assuming it's just slow.
+  Neither CLI nor MCP tool gives deploy-on-push — say so explicitly when reporting either one.
 - **Running the production migration**: `vercel env pull <tmpfile> --environment production --yes` to
   fetch the platform-set `DATABASE_URL`, then run the repo's own migration command against it
   (`DATABASE_URL=<value> npx prisma migrate deploy` or equivalent). Delete the temp env file afterward —
@@ -114,6 +139,13 @@ platform behaviors worth knowing up front instead of re-discovering by trial and
   - Vercel's **unique per-deployment URL** (the long hash-suffixed one, distinct from the project's
     production alias) is protected by Vercel's standard deployment-protection SSO wall by default — a
     302 to `vercel.com/sso-api` there is expected, not a bug. Hit the **production alias domain** instead.
+    If even the alias/domain is still behind the wall (e.g. an ad-hoc `vercel alias set` target, which is
+    NOT exempt the way a registered project Domain is), the simplest fix is the Vercel Claude Code plugin's
+    **`web_fetch_vercel_url`** MCP tool — it fetches through Vercel's own authenticated access and returns
+    the real response (status, headers, body), no bypass-secret or dashboard setup needed. Only fall back to
+    the `VERCEL_AUTOMATION_BYPASS_SECRET` header dance (retrieved via `GET /v9/projects/{id}` →
+    `.protectionBypass`, or a dashboard-created "Protection Bypass for Automation") when something other
+    than you needs to reach the URL, e.g. Playwright.
   - If the app itself does host-based routing (multi-tenant subdomain lookup, domain-based feature
     flags, etc.), the bare `*.vercel.app` domain may not satisfy that logic the way a real custom domain
     would, producing an application-level error that has nothing to do with infra health. Before
