@@ -1,0 +1,6 @@
+{
+  "name": "gold-strategy-research",
+  "description": "Autonomous XAUUSD strategy-research loop: review compact milestone state, resume the Optuna search, and course-correct toward the 4%/mo @ 8%-maxDD north star without bloating context.",
+  "version": "0.1.0",
+  "author": { "name": "Nikko" }
+}
