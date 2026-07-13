@@ -33,6 +33,35 @@ against a target that was never provisioned.
 - Keep environments consistent: the connection-string *shape* should match across environments so only the
   env *value* changes between local and cloud.
 
+## 1a. Security-relevant settings — confirm with the human before touching, always
+
+Never modify a security-related platform setting — deployment-protection/SSO walls, firewalls, WAF
+rules, access control, auth providers, secrets/bypass configuration, CORS/origin allowlists, IP
+allow/deny lists, or anything else that gates who can reach or authenticate against the app — without
+first stopping and getting explicit human confirmation. This holds even when the change looks purely
+instrumental (e.g. "disable SSO temporarily so the tester can reach the preview") and even when you're
+confident it's reversible. Propose the change and the exact command you'd run, state what it affects
+(preview only? production too? all deployments?), and wait. If you're blocked by a security wall and
+can't ask synchronously, stop and report the blocker instead of working around it unilaterally — don't
+silently proceed as if given permission.
+
+This applies regardless of how the setting is exposed (dashboard, CLI, or a direct platform API call) —
+the API-only path is not a loophole.
+
+## 1b. Preview vs. production — testing is pre-approved, production deploys are not
+
+**Testing and QA against a preview/staging deployment is standing-approved** — you don't need to ask before
+deploying to, or running checks against, a preview environment as part of the normal test/regression flow.
+That's what preview environments are for.
+
+**Deploying to production is a hard rule, no exceptions: always get explicit human approval for that
+specific deployment before it happens**, even if the human already approved the stage, the tests just
+passed, or a preview deploy of the exact same code was just approved minutes ago. Approval for one doesn't
+carry over to the other. Present exactly what would go to production (target, migrations, the deploy
+command) and wait for an explicit go — don't infer consent from silence, from a general "looks good," or
+from the fact that nothing is stopping you technically. If you're unsure whether a target counts as
+"production" (e.g. an ambiguous alias), stop and ask rather than guessing.
+
 ## 2. Cloud deployment (TBD until provisioned — do not fake it)
 
 Cloud deploy (e.g. Vercel + a hosted Postgres like Neon) is **only real once the resources are actually
@@ -42,6 +71,67 @@ provisioned and credentials exist.** Until then:
 - When the human confirms cloud resources exist, fill in the concrete steps: set env vars in the platform,
   run the production migration, deploy, and verify the deployed health endpoint.
 - Never invent credentials, URLs, or project IDs. If a required secret/target is missing, stop and ask.
+
+### Vercel + managed-Postgres (e.g. Neon) provisioning — known platform mechanics
+
+When the target is Vercel (directly via CLI, not necessarily the `vercel` MCP plugin), these are real
+platform behaviors worth knowing up front instead of re-discovering by trial and error:
+
+- **Linking a new project**: `vercel link --yes --scope <team> --project <name>` creates the project
+  non-interactively if it doesn't exist yet. `vercel whoami` / `vercel teams ls` confirm auth and scope
+  first.
+- **Marketplace integrations require a one-time browser step.** `vercel integration add <name> --scope
+  <team>` (e.g. `neon`) commonly returns `"status": "action_required", "reason":
+  "integration_terms_acceptance_required"` with a `verification_uri` — non-interactive CLI **cannot**
+  complete this itself. Surface the URL to the human, wait for confirmation, then re-run the exact same
+  command to finish provisioning. Don't loop or retry blindly; it will keep returning the same
+  action-required response until the human acts.
+- **Git-based auto-deploy has a real plan ceiling, not just a permissions issue.** Connecting a repo
+  (`vercel git connect`, or the dashboard's Project → Settings → Git) first needs the Vercel GitHub App
+  authorized on the org (one-time browser step) — but even after that, **Vercel's Hobby plan cannot
+  connect a *private* repo owned by a GitHub *organization***. This same root cause surfaces as two
+  different-looking errors depending on where it's hit: "repository is private and owned by an
+  organization... Upgrade to Pro" at connect time, or "the commit author did not have contributing access
+  to the project... Hobby Plan does not support collaboration for private repositories" at actual deploy
+  time (e.g. if the pushing git identity differs from the account that owns the Vercel project). Don't
+  chase the second one as a separate permissions bug — it's the same Hobby-plan ceiling. Surface the
+  tradeoff to the human (upgrade to Pro, make the repo public, or skip git auto-deploy) rather than
+  guessing which they'd prefer or retrying connect variations.
+- **Two ways to deploy without git linkage** — useful when git auto-deploy is blocked, or when the human
+  wants to avoid CLI/git-identity entanglement entirely:
+  - `vercel --prod --yes` (CLI) uploads the local source directly and builds/deploys it.
+  - The Vercel Claude Code plugin's `deploy_to_vercel` MCP tool does the same without any CLI or git
+    involvement at all: pass it the working-tree file contents directly (so uncommitted changes go out
+    too — it deploys what's on disk, not a git ref) and a project `name`; if that name matches an
+    existing project, it deploys into it and reuses its already-configured env vars rather than creating
+    a duplicate. Good default when the human has flagged CLI/git as unwanted for this step.
+  Neither gives deploy-on-push — say so explicitly when reporting either one.
+- **Running the production migration**: `vercel env pull <tmpfile> --environment production --yes` to
+  fetch the platform-set `DATABASE_URL`, then run the repo's own migration command against it
+  (`DATABASE_URL=<value> npx prisma migrate deploy` or equivalent). Delete the temp env file afterward —
+  don't leave production credentials sitting in a file in the working tree.
+- **Verifying the deployed health endpoint isn't always a plain `curl`:**
+  - Vercel's **unique per-deployment URL** (the long hash-suffixed one, distinct from the project's
+    production alias) is protected by Vercel's standard deployment-protection SSO wall by default — a
+    302 to `vercel.com/sso-api` there is expected, not a bug. Hit the **production alias domain** instead.
+  - If the app itself does host-based routing (multi-tenant subdomain lookup, domain-based feature
+    flags, etc.), the bare `*.vercel.app` domain may not satisfy that logic the way a real custom domain
+    would, producing an application-level error that has nothing to do with infra health. Before
+    concluding the deploy is broken, check whether the app's own routing/middleware could explain the
+    response. When HTTP verification is blocked this way, verify DB connectivity directly instead (pull
+    the prod env, run a small script through the repo's own DB client) to isolate "infra chain is fine"
+    from "app routing needs a real domain" — and report both findings separately rather than calling the
+    whole deploy broken.
+- **The local `.env` file gets uploaded regardless of `.gitignore`.** Vercel CLI deploys include it in the
+  build (logged as "Detected .env file..."); the platform's injected env vars still take precedence over
+  it at runtime, but don't assume a gitignored `.env` stays off the platform's build filesystem.
+- **Marketplace integration CLIs can have their own side effects.** Some (e.g. Neon's) run a postinstall
+  step that adds files to the repo unprompted (agent-skill installs, lockfiles, `.gitignore` edits). These
+  aren't something you chose — flag them to the human rather than silently committing them.
+- **Domain/alias management isn't exposed via the Vercel MCP tools** (no add-domain or rename-project
+  tool as of this writing) — renaming a project's `*.vercel.app` alias or adding a domain still needs
+  `vercel domains add <domain> <project>` (CLI) or the dashboard. This is a non-deployment admin action,
+  so it's a reasonable CLI use even in a session where the human wants deploys themselves done via MCP.
 
 ## 3. Return contract
 

@@ -6,8 +6,13 @@ description: Verify a built stage by running the tester agent against the real a
 # Test — catch everything before shipping
 
 You run the **verification phase**. One tester exercises the real software, finds **all** the issues in one
-pass, and you gate on the human before anything advances to deploy. The whole point is to catch bugs on
-localhost — cheaply and completely — so they never reach a deployed environment.
+pass, and you gate on the human before anything advances to deploy. The whole point is to catch bugs before
+they reach production — cheaply and completely.
+
+**Preview/staging deployments are a standing-approved testing target**, on the same footing as localhost —
+no need to ask before deploying to or testing against preview each time. This is distinct from
+**production**, which is never a testing target and always needs its own explicit human approval to deploy
+to at all (see `engineering:deploy`'s GATE E — a hard rule, no exceptions).
 
 ## Step 0 — Orient
 

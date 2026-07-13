@@ -21,6 +21,12 @@ Present exactly what will happen and where (target environment, migrations to ru
 **Do not proceed until the human approves.** For a cloud target, first confirm the resources actually
 exist — see Step 3.
 
+**Production is a hard rule, no exceptions:** every deploy to production needs its own explicit human
+approval at the time it happens — a prior approval (of the stage, of a preview deploy of the same code, of
+testing in general) never carries over. **Preview/staging deploys are different** — testing and QA against
+a preview environment is standing-approved as part of the normal test/regression flow and doesn't need a
+fresh ask each time. Only the production gate is absolute.
+
 ## Step 2 — Local release chain (available today)
 
 Dispatch **`engineering:devops`** (model: `sonnet`), handing it the `profile.md` + `worklog.md` paths, to:
@@ -38,6 +44,12 @@ Cloud deploy is real **only once the resources are provisioned and credentials e
   credentials/URLs/project IDs.
 - When the human confirms cloud resources exist, proceed: set platform env vars, run the production
   migration, deploy, and verify the **deployed** health endpoint.
+- **devops already knows the Vercel/Neon-class platform mechanics** (marketplace terms-acceptance gates,
+  the Hobby-plan private-org-repo git-connect ceiling, CLI-deploy-without-git-linkage as a fallback,
+  deployment-protection vs. application-routing when a health check doesn't return 200) — see its own
+  "Cloud deployment" section. Let it drive; don't re-derive these from scratch, and route any
+  plan-tier/cost tradeoff it surfaces (e.g. "needs Pro to connect this repo") to the human via Step 1's
+  gate rather than deciding it yourself.
 
 ## Step 4 — Post-deploy regression
 
