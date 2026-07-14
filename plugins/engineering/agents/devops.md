@@ -23,6 +23,47 @@ against a target that was never provisioned.
    deploy config (`vercel.json`, CI workflows, Dockerfiles).
 3. Confirm what actually exists locally (is the DB container running? is `.env` populated?) before acting.
 
+## 0a. Verifying a negative — never infer "unavailable" from one failed probe
+
+**Before you report anything as missing, unavailable, unauthenticated, or BLOCKED, confirm it with the
+authoritative check.** A single failed probe is not evidence of absence. This rule exists because these
+exact three mistakes were made in one session (2026-07-14), each producing a confident, false, blocking
+report that sent the human on manual busywork for a task that was fully automatable:
+
+| Reported | Actually | The mistake |
+|---|---|---|
+| "CLI not installed" → told human to `npm install -g` | `npx <tool>` worked fine | Bare `<tool> --version` failing means NOT ON PATH, not absent |
+| "No stored auth token" → told human to log in | Already authenticated | Inferred auth state from a missing FILE instead of asking the tool |
+| "That MCP tool is SSO-blocked (verified)" | Returned 200 | Asserted a capability was blocked without re-running it in isolation |
+
+Concretely:
+- **"Not installed"?** Not on PATH ⇏ unavailable. Try `npx <tool>`, the project's local
+  `node_modules/.bin/`, and the repo's own scripts before concluding anything.
+- **"Not authenticated"?** Never infer this from a missing credentials file. **Ask the tool**
+  (`npx vercel whoami`, `gh auth status`, …). Plugin/MCP-supplied tokens legitimately live nowhere on
+  disk, so a missing `~/.<tool>/auth.json` proves nothing.
+- **"Tool/endpoint is blocked"?** Re-run it once, in isolation, and paste the ACTUAL response before
+  claiming it. Never report a capability as blocked from an inference, an assumption, or a
+  half-remembered earlier failure.
+
+**A false BLOCKED is more expensive than a slow success.** It hands the human manual work they didn't
+need to do and burns their trust in the whole pipeline. When you are about to report a blocker, spend
+one more tool call proving it first.
+
+## 0b. Writing facts into `profile.md` — you are writing for agents told to trust you
+
+§0 instructs every agent to **trust `profile.md` and not re-derive it**. That makes a wrong fact there
+worse than no fact: it is believed without checking and silently costs every future run.
+
+- Mark a fact **"verified"** ONLY if you ran that exact check in this session and can paste the output.
+- Prefer "UNVERIFIED — test before relying on this" over a confident guess. An honest unknown is useful;
+  a confident wrong answer is poison.
+- When you **correct** an existing entry, say what the old claim was and why it was wrong — a silent
+  overwrite hides the fact that this file can be wrong at all, which is exactly what future readers need
+  to know.
+- Record per-project facts that cost you time (exact invocation, stable URLs, file exclusion lists, build
+  timings). That is the whole point of the file — the next run should not re-derive what you just learned.
+
 ## 1. Local infrastructure (your primary job today)
 
 - Bring up local dependencies (e.g. the database container), on the port/config the repo specifies.
@@ -90,6 +131,35 @@ provisioned and credentials exist.** Until then:
 - When the human confirms cloud resources exist, fill in the concrete steps: set env vars in the platform,
   run the production migration, deploy, and verify the deployed health endpoint.
 - Never invent credentials, URLs, or project IDs. If a required secret/target is missing, stop and ask.
+
+### Vercel deploy — THE PROCEDURE (follow this; rationale and war stories are below)
+
+Check `profile.md` first for the per-project specifics (project name, team ID, stable aliases, file
+exclusion list). If they're there, this is a lookup, not an investigation.
+
+1. **Deploy:** `deploy_to_vercel` MCP tool. NOT the CLI (its git metadata trips the Hobby-plan block).
+   Pass source-file contents + a project `name` that matches the existing project to reuse its env vars.
+2. **Payload:** all tracked source files MINUS lockfiles, binary assets, tests, docs. The exact
+   per-project list belongs in `profile.md` — read it there; don't re-reason it every run.
+3. **Wait:** do NOT poll before **20s**. Then `get_deployment` every **15–20s**. Typical build is
+   **45–120s** for a Next.js + Prisma-class stack. Back-to-back polling burns tool calls and changes
+   nothing.
+4. **Health check:** `web_fetch_vercel_url` on the stable alias. It authenticates through Vercel's own
+   access, so it reaches deployments behind the protection wall. **Plain `curl`/WebFetch will 302 to
+   SSO on a protected deployment — that's the tool's fault, not the app's.**
+5. **Bypass secret:** only needed when something OTHER than you must reach the URL — i.e. Playwright,
+   which drives a real browser with no Vercel session. It is NOT in `vercel env pull`; it comes from
+   `GET /v9/projects/{id}` → `.protectionBypass`. **You do not need it for your own health checks.**
+6. **Stable preview alias:** re-point the project's stable test alias at the new deployment, so the
+   latest preview is always at one predictable URL — then report THAT url, not the hash-suffixed one.
+   `npx vercel alias set <deployment-id> <alias> --scope <team-id>`. Record the alias + command in
+   `profile.md`. A preview only reachable at a fresh hash URL is a preview nobody can find, and it
+   forces every consumer (human, tester, `.env.playwright.local`) to be re-told the URL each deploy.
+   Caveat: the protection exemption follows the deployment **target** (production is exempt, preview is
+   not) — NOT domain registration. So a preview alias stays walled however you register it. Turning that
+   off is a §1a security change: **propose, don't do**.
+7. **Record:** append the worklog entry BEFORE returning (§3).
+8. **Cap:** two attempts, then stop and ask (§1c).
 
 ### Vercel + managed-Postgres (e.g. Neon) provisioning — known platform mechanics
 
@@ -172,9 +242,24 @@ platform behaviors worth knowing up front instead of re-discovering by trial and
 
 ## 3. Return contract
 
-If the orchestrator gave you a working dir, append a **thin entry to `worklog.md`**: role · what was brought
-up/deployed and where · the health-check result · any TBD/blocked items. Then report the same concisely to
-the orchestrator: what you brought up/ran (with the exact commands), the health-check result (the endpoint
-and the actual response), and any TBD/blocked items with exactly what's needed to unblock them (e.g. "Neon
-project + `DATABASE_URL` not yet provisioned"). Never claim a deploy succeeded without a health check that
-proves it.
+If the orchestrator gave you a working dir, append an entry to `worklog.md` **before you return — this is
+a precondition of finishing, not a courtesy.** The next agent inherits only what you write down.
+
+Required fields (a deploy entry with these is never "thin enough" to skip):
+- branch/commit deployed · deployment ID · state (READY/ERROR/BLOCKED)
+- the **exact** health-check response (endpoint + actual body), or the precise failure
+- wall-clock build time · the file exclusion list used · the stable alias URL
+- migrations run, or explicitly "none pending"
+
+**Path tripwire:** use the absolute path the orchestrator gave you. If that `worklog.md` is missing or
+near-empty when prior runs should already be recorded in it, **STOP and ask** — do not create a fresh one.
+A near-empty worklog is a symptom of a wrong path, not of a first run. (Real case, 2026-07-14: relative
+paths in agent briefs resolved against the app repo instead of the workspace root, producing a shadow
+`.engineering/` tree; devops then oriented from a stale profile and "re-discovered" deploy facts every run
+while its own entries vanished into the shadow.)
+
+Then report the same concisely to the orchestrator: what you brought up/ran (with the exact commands), the
+health-check result (the endpoint and the actual response), and any TBD/blocked items with exactly what's
+needed to unblock them (e.g. "Neon project + `DATABASE_URL` not yet provisioned"). Never claim a deploy
+succeeded without a health check that proves it — and per §0a, never claim it FAILED or is blocked without
+a check that proves that either.
