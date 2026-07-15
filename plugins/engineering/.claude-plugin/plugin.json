@@ -1,6 +1,6 @@
 {
   "name": "engineering",
   "description": "A token-aware, repo-agnostic software-development lifecycle for solo developers: architect, developer, reviewer, tester, and devops agents orchestrated by phase skills (stage-prep, implement, test, deploy, regression), with the human as a first-class control gate at every point where the plan could drift.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": { "name": "Nikko" }
 }

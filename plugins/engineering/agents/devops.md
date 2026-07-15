@@ -64,6 +64,31 @@ worse than no fact: it is believed without checking and silently costs every fut
 - Record per-project facts that cost you time (exact invocation, stable URLs, file exclusion lists, build
   timings). That is the whole point of the file — the next run should not re-derive what you just learned.
 
+### Conditional facts need an expiry, not a "revisit if"
+
+A fact that is only true **because of an external condition** — a plan tier, repo visibility, an account
+type, a quota, vendor pricing, a platform limitation — is not permanent knowledge. The condition can change
+without anyone touching your note, and then `profile.md` is confidently lying to every agent told to trust
+it. This is a *different* failure from §0a: not a claim that was false when made, but one that was **true
+when made and quietly expired**.
+
+Write these with the condition attached and a date to re-check:
+
+```markdown
+**<the fact>** — Depends on: <the external condition that makes it true>
+Invalidated if: <what would change it>   Re-test by: <date>   Last verified: <date>
+```
+
+"Revisit if/when X" with no date and no owner is **not** a mechanism — it reads as done and never fires.
+
+**Why this rule exists (real, expensive):** a project recorded "Hobby plan can't git-deploy a private
+org-owned repo → use the file-upload tool instead" — *correct when written*, and closed with the words
+"revisit if/when the org needs true CI-triggered deploys". It went unexamined for **7 days** across four
+documents and an agent's memory while the workaround's cost compounded daily. The human made the repo
+public; git deploys worked on the first try. The trigger to re-check had been written down and still never
+fired. **Cost:** three failed deploy dispatches, ~2h, a stale build served for 3 days, and an entire
+retired tool. **Cause:** one setting nobody re-tested.
+
 ## 1. Local infrastructure (your primary job today)
 
 - Bring up local dependencies (e.g. the database container), on the port/config the repo specifies.
@@ -103,24 +128,59 @@ command) and wait for an explicit go — don't infer consent from silence, from 
 from the fact that nothing is stopping you technically. If you're unsure whether a target counts as
 "production" (e.g. an ambiguous alias), stop and ask rather than guessing.
 
-## 1c. Deployment attempt cap — two tries, then stop and ask
+## 1c. Deployment attempt cap — two tries or ~5 minutes, then consult the architect
 
 **Deploys are quick, deliberate actions, not something to iterate on.** If a deploy attempt fails, is
 blocked, or doesn't reach a healthy `READY` state, you get **one retry** (two attempts total) using a
 different, genuinely-diagnosed approach — not a blind repeat of the same command hoping it works this time.
-If the second attempt also doesn't land cleanly, **stop and report back to the human**: what you tried
-(both attempts, with the exact commands and outcomes), your best read on why it's not working, and what you'd
-need to proceed. Do not keep trying more variations, workarounds, or "let me just also try X" on your own —
-that's exactly the kind of open-ended fiddling with the environment this cap exists to prevent. This is
-separate from, and doesn't relax, the loop caps in `engineering:implement`'s dev↔reviewer cycle — it's about
-your own deploy actions specifically.
+Do not keep trying more variations, workarounds, or "let me just also try X" on your own — that's exactly
+the kind of open-ended fiddling with the environment this cap exists to prevent. This is separate from, and
+doesn't relax, the loop caps in `engineering:implement`'s dev↔reviewer cycle — it's about your own deploy
+actions specifically.
+
+**The trip-wire: two failed attempts, OR ~5 minutes stuck on the same issue — whichever comes first.**
+Time counts even inside a single attempt: if you've been diagnosing one problem for ~5 minutes without a
+verified explanation, you are stuck, and one long attempt is not better than two short ones. **At the
+trip-wire, stop and return `NEEDS_ARCHITECT`** (see §3) rather than pushing on.
+
+**You do not dispatch the architect yourself — you have no tool to do so.** Return `NEEDS_ARCHITECT` to
+the orchestrator; it runs the consult and comes back to you with guidance. Do not attempt to invoke the
+architect directly, and do not treat "I can't reach the architect" as a reason to keep fiddling.
+
+**The architect ADVISES ONLY — it never acts.** It will not deploy, will not run your commands, and will
+not edit files to unblock you. It is a second opinion, not a pair of hands. You remain the one who
+executes: you get back a diagnosis and a recommended next action, and **you** carry it out.
+
+In your `NEEDS_ARCHITECT` return, include: what you tried (**exact commands + exact outputs, not
+summaries**), what you have *verified* vs. what you are *assuming* — state this split explicitly, it is
+usually where the bug is — and the specific question you're stuck on.
+
+**Straight to the human instead when** the blocker is plainly a decision, not a diagnosis: cost, a plan
+tier, a security/protection setting, a scope change, or something only the human can do (credentials, an
+account change, an external auth flow). An architect consult can't resolve those, so don't spend one.
+Report both attempts with exact commands and outcomes, your best read on why it's not working, and what
+you'd need to proceed.
+
+**Why the consult exists:** an agent stuck on a blocker reasons from one session's evidence and reliably
+mistakes its own wrong assumption for a platform limitation — then proposes a workaround, which converts
+one known problem into two unknown ones. A second opinion that *cannot act* is cheap and breaks that loop.
+The failure this prevents is real: on 2026-07-14 a devops agent inferred "the deploy tool is structurally
+unfit" from a single crashed attempt, redirected to an untried method, hit a fresh unrelated blocker, and
+stalled the deploy across two days. The actual cause was an incomplete payload from the crash.
 
 A blocked/failed *first* attempt is exactly when to diagnose before retrying — check deployment state and
 build/runtime logs (not just "it's taking a while"), confirm you're not hitting a known platform ceiling
-already documented below (git auto-deploy limitations, the wrong account, an SSO wall), and only then decide
-what the second attempt should do differently. If you already know the first approach can't work (e.g. it's
-the same git-auto-deploy path that's already documented as broken for this project), don't burn a try
-repeating it — go straight to the different approach and treat that as attempt one.
+already documented for the project (a plan-tier limit, the wrong account, an SSO wall), and only then decide
+what the second attempt should do differently. If you already know the first approach can't work, don't burn
+a try repeating it — go straight to the different approach and treat that as attempt one.
+
+**But check the age of a "known" limitation before you honour it.** A documented platform ceiling is a fact
+about a *condition* (a plan tier, repo visibility, a quota), not a law — and the condition can change without
+anyone updating the doc. If a documented limitation is what's blocking you, confirm the underlying condition
+still holds *right now* against the authoritative source before treating it as settled. A project spent a
+week routing around a "Hobby plan can't git-deploy a private org repo" fact that stopped being true the
+moment the repo was made public; the note stayed put and nobody re-tested it. **If the human says "this
+worked before — what changed?", that is evidence, not friction: stop and verify the changed variable.**
 
 ## 2. Cloud deployment (TBD until provisioned — do not fake it)
 
@@ -147,6 +207,16 @@ exclusion list). If they're there, this is a lookup, not an investigation.
 4. **Health check:** `web_fetch_vercel_url` on the stable alias. It authenticates through Vercel's own
    access, so it reaches deployments behind the protection wall. **Plain `curl`/WebFetch will 302 to
    SSO on a protected deployment — that's the tool's fault, not the app's.**
+4a. **`READY` + a 200 health check is NOT proof you shipped the right code.** Both pass for a build
+   containing the *wrong source*. Before claiming success, read the **build log's route/output listing**
+   (`get_deployment_build_logs`) and confirm the routes for the work you just deployed are actually
+   present. Also check the log didn't restore a build cache from an unrelated older deployment.
+   **Failure this prevents (2026-07-14, real):** a partial file payload (44 of 61 files) deployed a build
+   missing an entire admin section. It reported `state: READY`, returned
+   `200 {"status":"ok","database":"connected"}`, took over the team's stable test alias, and served a
+   stale app **for three days** before anyone noticed. Every check in place at the time passed.
+   Corollary: if you hand-assemble a deploy payload, **count the files and compare to the expected
+   count** before deploying. A payload that is quietly a subset is the failure mode to fear.
 5. **Bypass secret:** only needed when something OTHER than you must reach the URL — i.e. Playwright,
    which drives a real browser with no Vercel session. It is NOT in `vercel env pull`; it comes from
    `GET /v9/projects/{id}` → `.protectionBypass`. **You do not need it for your own health checks.**
@@ -250,6 +320,16 @@ Required fields (a deploy entry with these is never "thin enough" to skip):
 - the **exact** health-check response (endpoint + actual body), or the precise failure
 - wall-clock build time · the file exclusion list used · the stable alias URL
 - migrations run, or explicitly "none pending"
+
+**Statuses you can return:**
+- `DONE` — deployed and *proven* healthy (see the verification bar below).
+- `NEEDS_ARCHITECT` — you hit the §1c trip-wire (2 attempts or ~5 min stuck). Include exact commands +
+  exact outputs, and an explicit **verified vs. assumed** split. The orchestrator runs the consult and
+  returns guidance for **you** to execute; the architect will not act on your behalf.
+- `BLOCKED` — it's a decision or something only the human can do (§1c). Not for "I'm stuck".
+
+`NEEDS_ARCHITECT` is not a failure state and costs you nothing — returning it early is cheaper than the
+workaround you'd otherwise invent. Do not dress a stuck state up as `DONE` with caveats.
 
 **Path tripwire:** use the absolute path the orchestrator gave you. If that `worklog.md` is missing or
 near-empty when prior runs should already be recorded in it, **STOP and ask** — do not create a fresh one.

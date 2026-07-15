@@ -42,6 +42,31 @@ Dispatch **`engineering:devops`** (model: `sonnet`), handing it the `profile.md`
   served page).
 Report the exact commands and the actual health response.
 
+## Step 2a — When devops returns `NEEDS_ARCHITECT`
+
+devops trips a hard wire at **2 failed attempts or ~5 minutes stuck** on one problem (devops §1c). When it
+returns `NEEDS_ARCHITECT`, run the consult **immediately** — do not send it back for another try, and do
+not start diagnosing the platform yourself.
+
+- Dispatch **`engineering:architect`** (`opus`, **Mode C**) with devops's exact commands and outputs and
+  its **verified vs. assumed** split, **verbatim**. Never summarize the raw output — it is the evidence.
+- **The architect advises; it does not act.** It has no deploy tools and must not be given the job. Take
+  its diagnosis back to **devops** to execute.
+- Consults are cheap and expected. They do **not** count against devops's 2-attempt cap.
+- If the guidance also fails, or the consult surfaces a real decision (cost, plan tier, a security
+  setting), that's the human — via Step 1's gate.
+
+**Do not let a stuck deploy turn into method-shopping.** If the proven deploy path is failing, finish with
+the proven path or stop; do not redirect a blocked deploy onto an untried tool mid-flight. That trades one
+known problem for two unknown ones. (Real case, 2026-07-14: an orchestrator inferred "the deploy tool is
+structurally unfit" from a single crashed attempt, switched to an untried CLI path, hit an unrelated OS
+blocker, and stalled the deploy for two days. The real cause was an incomplete payload from the crash —
+and the human had already said, twice, that the tool had worked fine for a week.)
+
+**Treat "this worked before — what changed?" as evidence, not friction.** A human noticing a discontinuity
+beats an agent's inference from one session, because the agent has no yesterday. Stop and verify the
+changed variable against the authoritative source before proposing anything.
+
 ## Step 3 — Cloud deploy (TBD until provisioned — do not fake it)
 
 Cloud deploy is real **only once the resources are provisioned and credentials exist**. If they are not:
@@ -56,6 +81,15 @@ Cloud deploy is real **only once the resources are provisioned and credentials e
   "Cloud deployment" section. Let it drive; don't re-derive these from scratch, and route any
   plan-tier/cost tradeoff it surfaces (e.g. "needs Pro to connect this repo") to the human via Step 1's
   gate rather than deciding it yourself.
+- **Those ceilings are conditional facts — check the condition, not just the note.** Each depends on
+  something that can change without the doc changing: a plan tier, repo visibility, an account, a quota.
+  "Don't re-derive" means don't re-investigate the *mechanics* from scratch; it does **not** mean assume
+  the *condition* still holds. If a documented ceiling is what's blocking the deploy, confirm its
+  precondition against the authoritative source before accepting it — and if it's been weeks, say so to
+  the human, because the cheapest fix is often for them to change the condition. (Real case: a project
+  carried "Hobby can't git-connect a private org repo" for a week after the repo was made public. The fact
+  was true when written, never re-tested, and cost three failed deploy dispatches. The workaround it
+  justified had also silently shipped an incomplete build.)
 
 ## Step 4 — Post-deploy regression
 

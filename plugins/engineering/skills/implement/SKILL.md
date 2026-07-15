@@ -147,6 +147,18 @@ If the loop **hasn't converged after ~2 rounds**, or the developer returns `BLOC
 - The human is **not** pulled in just because the loop is slow — the architect resolves ordinary
   disagreements and blockers.
 
+**If the developer returns `NEEDS_ARCHITECT`** (stuck: 2 tries or ~5 min on one problem — developer §3a),
+run the consult **immediately**; don't ask the human first and don't tell the developer to try again.
+- Dispatch **`engineering:architect`** (`opus`, **Mode C**) with the developer's exact commands/errors and
+  its **verified vs. assumed** split, verbatim. Do not summarize the errors — the raw output is the
+  evidence, and your summary is where the useful detail dies.
+- **The architect advises; it does not act.** Take its diagnosis back to the *developer* to implement. Do
+  not let the architect write the fix, and do not implement it yourself — that silently makes you the
+  developer and skips review.
+- Then resume the loop from Step 4. A consult is cheap and expected; it is not a failure and does not count
+  against the round budget.
+- If the consult's guidance also fails, that's GATE C (Step 6) — a human decision, not a third try.
+
 ## Step 6 — GATE C: real design decision (human)
 
 Bring in the human **only** when it has become a genuine design decision:

@@ -74,6 +74,33 @@ Do **not** guess your way past it. Stop and report it as `BLOCKED` (see below) w
 
 The orchestrator will route it to the architect, and to the human if it's a real design decision.
 
+## 3a. When you're stuck — two tries or ~5 minutes, then ask for a consult
+
+§3 is about *ambiguity* — you know how, you don't know which. **This is about being stuck**: a build
+error, a failing test, an API not behaving, a fix that won't take. Different failure, same danger — a
+stuck agent quietly burns time, then invents a workaround that creates a second problem on top of the
+first.
+
+**The trip-wire: two failed attempts at the same problem, OR ~5 minutes on it without a verified
+explanation — whichever comes first.** Time counts inside a single attempt; one long grind is not better
+than two short tries. At the trip-wire, **stop and return `NEEDS_ARCHITECT`**.
+
+**You do not dispatch the architect yourself — you have no tool to do so.** Return the status; the
+orchestrator runs the consult and comes back with guidance.
+
+**The architect ADVISES ONLY — it never acts.** It will not write the fix, edit your files, or run your
+commands. It is a second opinion, not a pair of hands. You get a diagnosis and a recommended next action,
+and **you** implement it.
+
+Include: what you tried (**exact commands/errors, not summaries**), and an explicit split of what you have
+**verified** vs. what you are **assuming**. That split is the point of the exercise — being stuck for 5
+minutes almost always means an unexamined assumption is doing the work, and writing it down is often
+enough to find it yourself.
+
+Returning `NEEDS_ARCHITECT` is not failure and is never held against you. It is much cheaper than the
+workaround you'd otherwise invent — and *far* cheaper than silently widening scope to route around
+something you didn't understand.
+
 ## 4. Return contract — write your record, then return a short status
 
 **Before you return, append your own entry to the shared board** so the next agent doesn't start from
@@ -91,7 +118,10 @@ Then return the same short structured status to the orchestrator:
 
 - `DONE` — what changed (files), what you reused, and the verification command + its result.
 - `DONE_WITH_CONCERNS` — as above, plus specific things the reviewer/human should look at.
-- `BLOCKED` — the blocker, options, your lean, and why it needs a decision.
+- `BLOCKED` — the blocker, options, your lean, and why it needs a decision (§3).
+- `NEEDS_ARCHITECT` — you're stuck, not ambiguous (§3a): 2 tries or ~5 min on one problem. Exact
+  commands/errors + an explicit **verified vs. assumed** split. The orchestrator runs the consult and
+  returns guidance for **you** to implement.
 
 When responding to review findings, address them by their IDs and say per finding: fixed (how) / disagree
 (why) / needs-decision.
