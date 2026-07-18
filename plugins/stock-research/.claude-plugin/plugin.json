@@ -1,0 +1,6 @@
+{
+  "name": "stock-research",
+  "description": "India NSE 3-tier (SAFE/BALANCED/HIGH-RISK) long-horizon stock rotation board. Ships the india-scan orchestrator skill plus model-tiered agents: news-sweeper (sonnet, breadth triage), stock-researcher (opus, deep verdicts), macro-analyst (sonnet), report-builder (sonnet). Deterministic quant core lives in the india-invest repo; agents add the live news/research layer.",
+  "version": "0.1.0",
+  "author": { "name": "Nikko" }
+}

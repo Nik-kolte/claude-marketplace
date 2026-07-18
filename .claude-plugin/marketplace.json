@@ -36,6 +36,11 @@
       "name": "engineering",
       "source": "./plugins/engineering",
       "description": "Token-aware, repo-agnostic software-development lifecycle for a solo dev: architect/developer/reviewer/tester/devops agents orchestrated by phase skills (stage-prep, implement, test, deploy, regression) with the human as a control gate."
+    },
+    {
+      "name": "stock-research",
+      "source": "./plugins/stock-research",
+      "description": "India NSE 3-tier long-horizon rotation board: india-scan orchestrator skill + model-tiered agents (sonnet news-sweeper/macro-analyst/report-builder, opus stock-researcher) over the deterministic india-invest quant core."
     }
   ]
 }
