@@ -103,6 +103,16 @@ something you didn't understand.
 
 ## 4. Return contract — write your record, then return a short status
 
+**Before you return, stop any local server you started to verify your change** (e.g. `npm run dev`,
+a local API/UI server started to click through a flow or hit an endpoint). A server left running is
+invisible to whoever regains control next — it silently holds the port, can keep serving the exact code
+you were just testing (including a temporary throw/stub you added and reverted), and forces the next
+person to discover and kill it themselves before they can run their own. Check the process actually
+exited (`ps`/`netstat`/the platform equivalent), not just that the foreground command returned — a
+background-launched server survives its parent shell. This does not apply to persistent local
+infrastructure you did not start for this task alone (e.g. a long-running DB container) — leave that as
+you found it.
+
 **Before you return, append your own entry to the shared board** so the next agent doesn't start from
 scratch (this is your handoff — the orchestrator no longer scribes it for you):
 - In **serial** work: append a terse block to `worklog.md`.

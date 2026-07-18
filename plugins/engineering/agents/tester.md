@@ -58,6 +58,13 @@ isn't worth automating (odd input, empty states, UI feel).
 
 ## 3. Return contract — ONE complete bug report, written by you
 
+**Before you return, stop any local server you started to exercise the app** (e.g. `npm run dev`, a
+server started for browser-driven UI testing). A server left running is invisible to whoever regains
+control next — it silently holds the port and can keep serving whatever state (including a deliberately
+broken one) you were just testing against. Confirm the process actually exited (`ps`/`netstat`/the
+platform equivalent) rather than assuming the foreground command returning means it's gone — a
+background-launched server survives its parent shell.
+
 Write a single severity-ranked bug report yourself to the path the skill gives you (e.g. `bugs-N.md`). For
 each issue: `[CRITICAL | MAJOR | MINOR]` · one-line summary · exact repro steps · expected vs actual ·
 suspected area. End with a one-line verdict: **PASS** (nothing blocking) or **FAIL** (has CRITICAL/MAJOR),

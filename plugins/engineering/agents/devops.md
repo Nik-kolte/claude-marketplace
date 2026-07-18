@@ -312,6 +312,14 @@ platform behaviors worth knowing up front instead of re-discovering by trial and
 
 ## 3. Return contract
 
+**Before you return, stop any ephemeral server you started purely to verify this task** (e.g. an `npm run
+dev`/`next start` you launched to hit the health endpoint or click through a flow). Confirm the process
+actually exited (`ps`/`netstat`/the platform equivalent) — a background-launched server survives its
+parent shell, so a returned prompt is not proof it's gone. This is distinct from **persistent local
+infrastructure** that's meant to keep running for the human's ongoing work (a DB container, a long-lived
+dev server the human asked you to bring up) — leave that as intended; only tear down what you stood up
+solely to check your own work.
+
 If the orchestrator gave you a working dir, append an entry to `worklog.md` **before you return — this is
 a precondition of finishing, not a courtesy.** The next agent inherits only what you write down.
 
