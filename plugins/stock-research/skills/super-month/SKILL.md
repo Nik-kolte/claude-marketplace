@@ -22,11 +22,14 @@ All commands run from `D:\projects\repos\india-invest`.
      `superstrategy/output/run_<date>/rebalance_report.html` — the printed
      lines plus that HTML file are all the context you need — do NOT read
      parquet/price files.
-   - The HTML report is the per-month "why": for each added/removed/held
-     stock it shows the 12-1 momentum, % of 52-week high, and blended
-     tilt score, diffed against the previous run, plus the shield signal
-     changes and the ranks-11-15 near-misses. It's generated automatically
-     every run — nothing else to do here.
+   - The HTML report leads with plain-English "what to do this month"
+     (sell/buy tables — entry vs. exit price, realized P&L per trade,
+     weights), then the top-10 target list with "held since"/"new" status.
+     All scoring jargon (rank, 12-1 momentum, % of 52-week high, blended
+     tilt score, shield-signal internals, ranks-11-15 near-misses) is
+     folded into a collapsed "Full scoring detail" section with hover
+     tooltips. It's generated automatically every run — nothing else to
+     do here.
    - It also carries a "Paper portfolio" section: a notional ₹1,00,000
      account (auto-opened on the first ever run) tracked stock-by-stock —
      realized P&L when a name is sold (dropped from the top 10, or a
