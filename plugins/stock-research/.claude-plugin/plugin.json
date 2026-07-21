@@ -1,6 +1,6 @@
 {
   "name": "stock-research",
-  "description": "India NSE 3-tier (SAFE/BALANCED/HIGH-RISK) long-horizon stock rotation board. Ships the india-scan orchestrator skill plus model-tiered agents: news-sweeper (sonnet, breadth triage), stock-researcher (opus, deep verdicts), macro-analyst (sonnet), report-builder (sonnet). Deterministic quant core lives in the india-invest repo; agents add the live news/research layer.",
-  "version": "0.1.0",
+  "description": "India NSE research suite. (1) 3-tier (SAFE/BALANCED/HIGH-RISK) long-horizon rotation board: india-scan orchestrator skill + model-tiered agents (news-sweeper, stock-researcher/opus, macro-analyst, report-builder). (2) Harsh-method swing screener: prospect-scan orchestrator skill (monthly-ROC market-cycle gate, near-ATH sector leaders, recent-IPO VCP/base breakouts) + prospect-sweeper (sonnet, IPO watchlist) and prospect-researcher (opus, STRONG/WATCH/PASS ratings). (3) Super Strategy: super-month orchestrator skill - monthly Core+Shield playbook from the frozen validated champion (momentum+ATH-tilt 10-stock core, 5-signal market-health exposure ladder, gold/liquid defense). Deterministic quant cores live in the india-invest repo; agents add the live news/research layer.",
+  "version": "0.3.0",
   "author": { "name": "Nikko" }
 }
