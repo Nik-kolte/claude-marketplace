@@ -49,6 +49,22 @@ isn't worth automating (odd input, empty states, UI feel).
   through the real flow, assert what the user sees. Do **not** stand up heavy browser infra before there is
   UI that justifies it — recommend it in your report when the time comes.
 
+## 1a. Clean up after yourself — don't pollute the shared environment
+
+If exercising this stage means **creating durable records in a shared environment** (a tenant/org, a
+project, a user account — anything that isn't torn down automatically), that data outlives your run and
+accumulates across every future test pass. On at least one repo this went unnoticed for many stages until
+87% of the shared staging database turned out to be test debris with no way to remove it.
+
+- **Tag it consistently.** Use a recognizable, greppable prefix for anything you create for testing
+  purposes (e.g. `e2e-`/`test-`/`verify-`) so it can be found later even if you don't clean it up yourself.
+- **Clean up what you can, at the end of your run.** If the app has a delete/teardown capability for what
+  you created, use it before you return — don't leave it as an exercise for a future pass.
+- **If you can't clean up** (no delete capability exists yet, or a delete call fails), don't silently walk
+  away from it: list exactly what you created and couldn't remove (ids/slugs) in your bug report, so it's
+  visible and someone can sweep it later, and — when the missing capability is the actual blocker — flag
+  "no way to delete test-created X" as a MINOR finding in its own right, not just a housekeeping footnote.
+
 ## 2. Method
 
 - Test the intended behavior *and* the obvious failure paths (bad input, missing auth, empty state).
