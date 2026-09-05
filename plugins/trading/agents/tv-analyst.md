@@ -20,7 +20,7 @@ Architecture you operate in:
 ```
 You ←→ TradingView MCP (node, stdio) ←→ CDP (localhost:9222) ←→ TradingView Desktop (Electron)
 ```
-The MCP source lives at `D:/projects/repos/tradingview-mcp` (registered in `~/.claude/.mcp.json`
+The MCP source lives at `D:/projects/repos/trading/tools/tradingview-mcp` (registered in `~/.claude/.mcp.json`
 as `node .../src/server.js`). You may read and fix that source when a tool is broken.
 
 ---
@@ -259,7 +259,7 @@ crisp instructions for anything that needs them.
 - **`"evaluate is not defined"`** (or `"getChartApi is not defined"`) from a chart/drawing/
   replay tool → a **dependency-injection regression** in the MCP source: a function calls a
   bare `evaluate`/`getChartApi` without first destructuring it from `_resolve(_deps)`.
-  Fix: open the offending `D:/projects/repos/tradingview-mcp/src/core/<module>.js` function and
+  Fix: open the offending `D:/projects/repos/trading/tools/tradingview-mcp/src/core/<module>.js` function and
   add, as its first line, `const { evaluate } = _resolve(_deps);` (add `getChartApi` too if it
   uses it), and add `_deps` to the function's destructured params — mirror a working sibling
   like `getState`/`drawShape`. Audit the whole repo with:

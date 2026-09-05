@@ -1,6 +1,8 @@
 {
   "name": "trading",
-  "description": "TradingView analysis & strategy-development tooling. Ships the tv-analyst agent plus night-watch (observe-only live-session journaling), strategy-study (weekly propose-only improvement review), strategy-optimize (autonomous multi-round backtest optimization with milestone/decision reporting and prop-firm fit), and strategy-deploy (Pine conversion + Python-vs-TradingView fidelity report) skills, driven by the TradingView MCP.",
-  "version": "0.3.0",
-  "author": { "name": "Nikko" }
+  "description": "Tooling for the consolidated trading repo. Ships tv-analyst (TradingView MCP: chart analysis, Pine development, backtest validation), researcher (opus: hunts new FX/metals strategies against a journal of every hypothesis ever tested, with cost and multiple-testing gates), and optimizer (opus: minimises expected calendar days to a funded prop account).",
+  "version": "0.5.0",
+  "author": {
+    "name": "Nikko"
+  }
 }

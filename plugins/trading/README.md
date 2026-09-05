@@ -1,56 +1,54 @@
-# trading
+# trading plugin
 
-TradingView analysis & strategy-development tooling for Claude Code.
+TradingView analysis and strategy-development tooling for the consolidated trading repo at
+`D:\projects\repos\trading`. Read that repo's `instructions/` before using any of this — in
+particular `instructions/01-point-in-time-backtesting.md`, which gates what may be optimized or
+deployed at all.
 
 ## Contents
 
-- `agents/tv-analyst.md` — expert TradingView analyst + Pine Script engineer. Drives the
-  TradingView MCP to analyze charts on any timeframe, scroll/zoom to specific dates, read
-  custom Pine indicator output, run and validate backtests, perform bar-replay walkthroughs,
-  and build + validate new Pine strategies and indicators. Includes a self-diagnosis &
-  repair playbook for when the MCP itself misbehaves.
-- `skills/night-watch/` — **observe-only** live-session journaling. During the London
-  killzone (~2–5am New York time) it snapshots EURUSD + GBPUSD and logs what the three
-  London-session ICT strategies *would* signal vs. what the market actually does,
-  appending to `improve/journal/` in the tradingview-mcp repo. Invoke as
-  `/trading:night-watch`. Never trades, never edits strategy files.
-- `skills/strategy-study/` — **propose-only** weekly review. Mines the night-watch
-  journals for patterns/near-misses, optionally re-runs the offline Python backtesters,
-  and writes honest improvement proposals to `improve/findings/`. Invoke as
-  `/trading:strategy-study`. Never edits the locked strategy specs or protected results.
+- `agents/tv-analyst.md` — expert TradingView analyst and Pine engineer. Drives the TradingView MCP
+  (~78 tools over CDP to a live TradingView Desktop chart): chart analysis on any timeframe, reading
+  custom Pine output, running and validating backtests, bar-replay walkthroughs, and developing new
+  Pine strategies end to end.
+- `agents/researcher.md` — **opus**. Open-minded strategy hunter. Reads the research journal so it
+  never re-runs a dead idea, generates hypotheses from the literature and from first principles,
+  screens them against the 3x cost clause **and Benjamini-Hochberg FDR at q=0.10**, builds engines
+  for survivors, and hands up to 5 promising-but-imperfect candidates to the optimizer with a pitch
+  deck each. Records every result — especially failures — back into the journal. Accepts an optional
+  bias ("use RSI", "session-based only") to steer the search without lowering the bar.
+- `agents/optimizer.md` — **opus**. Takes a strategy that already passed the research gate and
+  finds the fastest *admissible* path to a funded prop account. Computes expected calendar days to
+  funded (`research/core/funding_speed.py`), proves by arithmetic whether the speed target is
+  reachable at all before searching, and either tunes within hard risk constraints or proposes new
+  higher-frequency hypotheses that must clear the null screen first. Optimises time, never
+  survival: a lower pass rate is tradeable, a higher breach rate is not. Reports "not reachable"
+  rather than manufacturing a fast-looking breach.
 
-## Scheduling the night-watch loop (local only)
+## Requirements
 
-The TradingView MCP drives a **local** TradingView Desktop over CDP `localhost:9222`,
-so the scheduler must run on the same machine — Anthropic cloud routines cannot reach
-it. Use a **Claude Desktop → Routines → New → Local** task (or Windows Task Scheduler
-running `claude -p "/trading:night-watch"`). Set the project folder to your
-tradingview-mcp repo so `./improve/` resolves there.
+**tv-analyst** needs TradingView Desktop running with CDP on port 9222. Launch via the repo's
+`tools/tradingview-mcp/scripts/launch_tv_debug.*` or the MCP's `tv_launch` tool; `tv_health_check`
+verifies the connection.
 
-> **Timezone:** the killzone is New York time. On an IST machine that lands ~10:50–15:05
-> IST (it shifts an hour across US DST). Schedule the OS trigger broadly across that
-> IST window every ~25 min; the skill gates on the live NY clock and skips firings
-> outside 01:25–05:00 NY, so over-scheduling is harmless. Run `strategy-study` weekly
-> (e.g. Sundays). Full setup steps live in the tradingview-mcp repo at `improve/README.md`.
+**optimizer** needs no TradingView. It runs against the research toolchain
+(`cd research && uv sync`) and the parquet in `research/marketData/`.
 
-## Requirement
+## Protected paths
 
-The `tv-analyst` agent depends on the **TradingView MCP** server being installed and running,
-connected to a live TradingView Desktop via CDP on port `9222`. Register it (user scope) in
-`~/.claude/.mcp.json`:
+Never delete, overwrite, or truncate anything under `research/strategies/*/results/`. Those files
+represent hours or days of compute — open logs in append mode, and ask before touching a result file.
 
-```json
-{
-  "mcpServers": {
-    "tradingview": { "command": "node", "args": ["<path>/tradingview-mcp/src/server.js"] }
-  }
-}
-```
+## Removed
 
-TradingView Desktop must be launched with `--remote-debugging-port=9222`. The agent runs
-`tv_health_check` first and will guide you if the connection isn't ready.
+**2026-09-04** — `strategy-optimize` and `strategy-deploy` were deleted. Both still pointed at
+`D:\projects
+epos	rade-research` and `strategy/utils/`, paths that stopped existing at the
+September consolidation into `trading/` with `research/core/`, so both would have failed on
+invocation. The optimization role is now the `optimizer` agent, built against the real paths.
 
-## Use
+**2026-09-03** — `night-watch` (observe-only London-session journaling) and `strategy-study`
+(weekly propose-only review) were removed along with the London ICT strategies they served and the
+`improve/` journal tree they wrote to.
 
-Invoke the agent by name (e.g. "use tv-analyst to analyze my chart" or via the Task tool).
-After adding or updating this plugin, run `/plugin marketplace update nikko-marketplace`.
+All are recoverable from git history if any of those workflows is ever wanted again.

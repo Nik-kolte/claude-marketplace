@@ -1,7 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "nikko-marketplace",
-  "owner": { "name": "Nikko", "email": "nikkolte@gmail.com" },
+  "owner": {
+    "name": "Nikko",
+    "email": "nikkolte@gmail.com"
+  },
   "description": "Personal catalog of Claude Code plugins.",
   "plugins": [
     {
@@ -12,26 +15,18 @@
     {
       "name": "trading",
       "source": "./plugins/trading",
-      "description": "TradingView analysis & strategy-development agent (tv-analyst) plus the strategy research-to-deployment pipeline (strategy-optimize, strategy-deploy), driven by the TradingView MCP."
+      "description": "TradingView analysis & Pine development (tv-analyst) plus an opus research pipeline: researcher hunts new FX/metals strategies against a journal of every hypothesis ever tested, and optimizer minimises expected calendar days to a funded prop account under hard point-in-time and prop-firm constraints."
     },
     {
       "name": "trade-reflect",
       "source": "./plugins/trade-reflect",
       "description": "Intelligent self-improvement brain (reflect skill) for the cloud paper-trading worker: reasons over recent trades and evolves strategy.yaml one variable per cycle."
-    }
-    ,
+    },
     {
       "name": "personal",
       "source": "./plugins/personal",
       "description": "Personal productivity: CC statement parsing and expense categorisation."
-    }
-    ,
-    {
-      "name": "gold-strategy-research",
-      "source": "./plugins/gold-strategy-research",
-      "description": "Autonomous XAUUSD strategy-research loop: resume/review the Optuna search and milestones, course-correct toward the 4%/mo @ 8%-maxDD goal from compact state."
-    }
-    ,
+    },
     {
       "name": "engineering",
       "source": "./plugins/engineering",
