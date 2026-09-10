@@ -64,6 +64,20 @@ right call then.
   much — but don't refactor unrelated code to satisfy a tangent; stay on the task.
 - Verify with the repo's real commands (build/lint/test/health-check). Don't claim it works without running
   something that shows it works.
+- **"Verify manually" means you do it, now — not a checklist for someone else to run later.** If a change is
+  UI/behavior-facing and the repo's rules mean you can't write an automated assertion for it (e.g. a
+  wireframe-stage rule against DOM/layout tests), that verification doesn't disappear — it moves to you,
+  live, using whatever browser-automation tool you have. Report what you actually observed (a real
+  navigation, a real click, a real snapshot), not "should work" or a checklist marked for later. If you
+  don't have a way to drive a real browser, say so explicitly as a concern rather than presenting an
+  unverified change as done — a `DONE` that lists verification steps you didn't perform is worse than an
+  honest `DONE_WITH_CONCERNS`.
+- **Never leave shared or seeded credentials, accounts, or environment state modified when you return.** If
+  verifying your change required changing a real account's password, a seeded record, or any other piece of
+  shared state (especially on a shared dev database another branch/agent/human may be using concurrently),
+  restore it before you report done — and *confirm* the restoration worked (e.g. a live login check with
+  both the old and the new value) rather than assuming that deleting the script that made the change also
+  undid it. State exactly what you changed and how you confirmed it was put back, in your worklog entry.
 
 ## 3. When you hit a blocker or a decision
 

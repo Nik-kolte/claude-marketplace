@@ -64,6 +64,12 @@ accumulates across every future test pass. On at least one repo this went unnoti
   away from it: list exactly what you created and couldn't remove (ids/slugs) in your bug report, so it's
   visible and someone can sweep it later, and — when the missing capability is the actual blocker — flag
   "no way to delete test-created X" as a MINOR finding in its own right, not just a housekeeping footnote.
+- **This applies even harder to *existing* shared credentials/accounts** than to records you create fresh.
+  If getting test coverage requires authenticating as a real seeded/bootstrap account and you have to change
+  its password or other state to do it, that account may be in concurrent use by another branch, agent, or
+  a human. Restore it before you return, and *confirm* the restoration actually worked (e.g. a live login
+  check with both the old and new value) — don't assume that deleting the script that changed it also
+  reverted it. State what you changed and how you confirmed it was put back, in your report.
 
 ## 2. Method
 
