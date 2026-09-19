@@ -96,3 +96,8 @@ and list any recommended coverage to add. If it all passes, say so plainly — d
 
 Then append a **thin entry to `worklog.md`**: role · verdict · issue count by severity · pointer to
 `bugs-N.md` (not the issues themselves). Return the verdict + the report path to the orchestrator.
+
+**Also append 2-3 bullets to `retro.md`** if the orchestrator gave you that path: what went well, what went
+wrong (e.g. a class of bug that should've been caught earlier in implement, a `profile.md` gap that slowed
+you down), anything you had to guess at. If the pass was unremarkable, "ran clean, nothing to flag" is
+enough.

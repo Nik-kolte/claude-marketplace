@@ -74,3 +74,8 @@ manufacture findings to look thorough.
 
 Then append a **thin entry to `worklog.md`**: role · verdict · finding count by severity · pointer to
 `review-N.md` (not the findings themselves). Return the verdict + the report path to the orchestrator.
+
+**Also append 2-3 bullets to `retro.md`** if the orchestrator gave you that path: what went well, what went
+wrong or was confusing (e.g. a plan that didn't call out a deviation, a diff that took more rounds than it
+should have), anything you had to guess at. If the round was unremarkable, "ran clean, nothing to flag" is
+enough.

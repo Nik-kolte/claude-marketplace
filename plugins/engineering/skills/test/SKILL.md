@@ -23,7 +23,8 @@ the `worklog.md` **Status block** (what was built, its current pointer) — not 
 entry log, which has been accumulating since implement started and only grows further across fix rounds.
 Don't re-run project-profile discovery yourself; the tester reads that shared context. If no `profile.md`
 exists yet, have the tester produce one as its first step. Read the approved stage target so the tester
-checks against **intended behavior**, not just crashes.
+checks against **intended behavior**, not just crashes. Reuse `retro.md` from the same working dir too — it
+carries over from `implement`; keep appending to it, don't start a fresh one.
 
 ## Step 1 — Run the tester (one complete pass)
 
@@ -81,7 +82,9 @@ re-derives the cases, and a stage that isn't deployed still contributes its cove
 Before handing off, take a quick pass over how this run of test actually went — how many test↔fix↔re-test
 rounds it took, whether the tester found something that should have been caught back in `implement`, whether
 a fix round used the right branch (`feature/<description>` off `release/<stage>`, not a `hotfix`). This is a
-cheap check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did.
+cheap check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did. **Append these
+bullets to `retro.md`** (role: orchestrator), same as `implement`'s Step 8 — this closes out the stage's
+retrospective board so it's ready to summarize whenever the human asks.
 
 If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's, the
 tester's, or the developer's instructions in this plugin (e.g. "the same class of bug slipped through twice —

@@ -62,7 +62,9 @@ Output: a crisp stage target + scope the human approves, ready to be written int
   it **deviates** or introduces a new decision.
 - **Record your decision in the shared context.** Append a thin entry to `worklog.md` (role · the question ·
   your ruling · whether it stays within the approved design or must go to the human) so the loop's history
-  isn't lost when you exit. Then return the same decision to the orchestrator.
+  isn't lost when you exit. If a `retro.md` path was given to you, add a line there too when the consult
+  itself reveals something worth flagging (e.g. "this is the second escalation over the same ambiguity — the
+  plan should have called it out"). Then return the same decision to the orchestrator.
 - **Know your limit.** If resolving it requires a genuine design change, a new decision the human hasn't
   made, or you're honestly uncertain — say so explicitly and hand it up to the human. Do not paper over a
   real decision to keep the loop moving.

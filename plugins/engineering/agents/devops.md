@@ -329,6 +329,10 @@ Required fields (a deploy entry with these is never "thin enough" to skip):
 - wall-clock build time · the file exclusion list used · the stable alias URL
 - migrations run, or explicitly "none pending"
 
+If a `retro.md` path was given to you, also append 2-3 bullets there: what went well, what went wrong
+(a platform ceiling that cost you retries, a `profile.md` fact that was stale), anything you had to
+diagnose from scratch that should have been recorded for next time.
+
 **Statuses you can return:**
 - `DONE` — deployed and *proven* healthy (see the verification bar below).
 - `NEEDS_ARCHITECT` — you hit the §1c trip-wire (2 attempts or ~5 min stuck). Include exact commands +

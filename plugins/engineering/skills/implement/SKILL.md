@@ -13,7 +13,7 @@ sub-agent's. You do not write the product code yourself; the developer agent doe
 
 ## Working files — the shared-context protocol
 
-Use an ephemeral working dir in the repo, e.g. `.engineering/<stage>/` (recommend it be gitignored). Two
+Use an ephemeral working dir in the repo, e.g. `.engineering/<stage>/` (recommend it be gitignored). Three
 files are the shared context that stops every agent from starting cold; pass everything **by path**, never
 by pasting big content into your own context:
 
@@ -33,6 +33,17 @@ by pasting big content into your own context:
   means every later dispatch in the stage pays a bigger token cost than the one before it for no benefit —
   the Status block exists specifically so that doesn't happen. Full history is for you (routing) and for
   debugging a stalled loop, not a default per-agent read.
+- **`retro.md`** — the **stage's retrospective board**, append-only, one short entry per agent dispatch (2-3
+  bullets: what went well, what went wrong or was confusing, anything it had to guess at or work around) plus
+  your own orchestrator-level findings (see Step 8/`test`'s Step 5). This is cheap — it's each agent's own
+  postmortem on its own step, not a new review pass — and it's what turns "how did this stage go" from a
+  question nobody can answer into one you read a file for. Create it empty at Step 0 alongside `worklog.md`.
+  **When the human asks for a stage retrospective at any point**, read the whole of `retro.md` and summarize
+  it grouped by theme (not a raw dump of every entry) — this file is small by construction (a few bullets per
+  dispatch, not a growing transcript), so reading it in full for this purpose is fine; it's `worklog.md`'s
+  entry log that needs scoping, not this one. **Hand its path to every agent you dispatch**, alongside
+  `profile.md` and the Status block, so each one can append its own bullets on return — every agent
+  definition in this plugin already expects it conditionally ("if the orchestrator gave you that path").
 - **Detail artifacts** (each authored by the agent that produced it, linked from the worklog): `plan.md`
   (developer), `diff.patch` / diff range, `review-N.md` (reviewer), `item-<id>.md` (per parallel work item).
 
@@ -44,18 +55,18 @@ You read **`worklog.md` + `profile.md` + each agent's short return** and *route*
 source files to understand the code, and you do **not** re-run project-profile discovery — if you need to
 know something about the code, dispatch an agent to find out. You do **not** author plans, reviews, reports,
 or Execution-Log prose — the agents write their own records. The only writing/running you do is thin
-mechanical bookkeeping and infra: scaffold the `worklog.md` header, generate a diff (`git diff`), set
-up/tear down worktrees for parallel work, and consolidate the final Execution Log from the agents' worklog
-entries. If you catch yourself opening a source file to figure out what's going on, stop — that's an agent's
-job.
+mechanical bookkeeping and infra: scaffold the `worklog.md` header and an empty `retro.md`, generate a diff
+(`git diff`), set up/tear down worktrees for parallel work, and consolidate the final Execution Log from the
+agents' worklog entries. If you catch yourself opening a source file to figure out what's going on, stop —
+that's an agent's job.
 
 ## Step 0 — Orient & load the approved target
 
 Ensure `profile.md` exists in the working dir: if `stage-prep` seeded it, reuse it; if not, dispatch a cheap
 agent (developer, `haiku`/`sonnet`) to produce it — **you don't do discovery yourself**. Scaffold
-`worklog.md` with the stage header. Then read the **approved stage target** from the tracker (the worklog
-links it). Everything you build is measured against this. If there's no approved stage, stop and point the
-human to `engineering:stage-prep`.
+`worklog.md` with the stage header and Status block, and an empty `retro.md`. Then read the **approved stage
+target** from the tracker (the worklog links it). Everything you build is measured against this. If there's
+no approved stage, stop and point the human to `engineering:stage-prep`.
 
 ## Branching discipline (applies to every step below)
 
@@ -206,6 +217,9 @@ Before handing off, take a quick pass over how this run of implement actually we
 it took, whether the architect had to step in, whether a developer returned `BLOCKED` or guessed instead of
 reading `profile.md`/`worklog.md`, whether the triage tier (Step 1) was judged right, any branching missteps.
 This is a cheap check, not an audit — a few bullet points, or "ran clean, nothing to flag" if it did.
+**Append these bullets to `retro.md`** (role: orchestrator) — don't just surface them in your handoff message
+and let them evaporate; this is what makes a later "how did this stage go" answerable from a file instead of
+re-derived from memory.
 
 If something real surfaces, propose a **concrete fix** — usually a specific edit to this skill's or an
 agent's instructions in this plugin (e.g. "the developer needed 3 rounds because `plan.md` didn't call out a

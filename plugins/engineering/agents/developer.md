@@ -181,6 +181,12 @@ Keep the entry thin — *outcome + pointers, not a transcript*: role · what cha
 (paths) · any decision taken · the verify command + its result · your status. Point to `plan.md`/the diff
 for detail rather than inlining it.
 
+**Also append 2-3 bullets to `retro.md`** if the orchestrator gave you that path: what went well, what went
+wrong or was confusing (a doc gap, an unclear plan, a review round that shouldn't have been needed), anything
+you had to guess at or work around. This is your own quick postmortem on this dispatch, not a second review —
+it's what lets the human ask "how did this stage go" later and get a real answer instead of nothing. If the
+run was unremarkable, a single "ran clean, nothing to flag" line is enough.
+
 Then return the same short structured status to the orchestrator:
 
 - `DONE` — what changed (files), what you reused, and the verification command + its result.
