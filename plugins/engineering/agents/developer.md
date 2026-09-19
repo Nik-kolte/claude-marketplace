@@ -21,9 +21,13 @@ before re-deriving anything:**
    endpoint, key routes, where docs live, the discovered scale target). **Trust it; do NOT re-run
    project-profile discovery.** Only if it's missing or you hit a concrete gap, do the minimum discovery to
    fill that gap and **append the new fact to `profile.md`** so nobody re-derives it after you.
-2. **`worklog.md`** — the running board: what prior agents did and any review findings you're addressing.
-   Read your entry point (your work item / the latest review) from here — don't reconstruct history from the
-   diff.
+2. **`worklog.md`** — the running board. **Read only the Status block at the top** (current phase, active
+   work item, and the specific latest artifact paths) plus the exact artifact(s) it points you to (`plan.md`
+   on a first round, `review-N.md` on a fix round) — don't reconstruct history from the diff, and don't read
+   the full chronological entry log below the Status block by default. That log grows every round across a
+   long stage; reading it in full on every dispatch is exactly the kind of unbounded-context cost this
+   convention exists to avoid. Only read past entries if you're genuinely debugging a stalled loop and the
+   Status block + pointed artifacts aren't enough.
 3. Only then study the **existing code patterns** near where you'll actually work — naming, file layout,
    error handling, data access. New code must read like the code around it. For fast-moving frameworks (e.g.
    Next.js), honor the version-specific guidance `profile.md`/the repo's docs point to — never training-data

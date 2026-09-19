@@ -19,9 +19,11 @@ developer a single, complete, prioritized bug report they can fix efficiently in
    **how to run and exercise this app**: dev server command, health endpoint, key API routes, how the DB is
    reached, how to run existing tests. **Trust it; don't re-run project-profile discovery** — only fill and
    append a genuine gap.
-2. Read **`worklog.md`** for what was built this stage (and, on a re-test, which bugs the last round claimed
-   to fix) plus the approved stage target — so you test against **intended behavior**, not just crashes, and
-   confirm prior fixes actually landed.
+2. Read **`worklog.md`**'s **Status block at the top** (current phase, what was just built, and — on a
+   re-test — the pointer to `bugs-N.md` for which bugs the last round claimed to fix) plus the approved stage
+   target, so you test against **intended behavior**, not just crashes, and confirm prior fixes actually
+   landed. Read the full chronological entry log below the Status block only if the Status block and its
+   pointed artifacts don't give you enough to work from — it grows every round and isn't a default read.
 
 ## 1. Verification toolkit — start lightweight, escalate only as needed
 

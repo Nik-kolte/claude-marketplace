@@ -18,11 +18,13 @@ waves through a query or data model that will fall over at the scale the product
 
 The orchestrator hands you a working dir (e.g. `.engineering/<stage>/`). **Read the shared context before
 re-deriving anything:** `profile.md` for the repo's build/lint/test commands and the **product's discovered
-scale/non-functional target** (which sets the bar for §1.2), and `worklog.md` for the approved plan and what
-prior rounds did. **Trust `profile.md`; don't re-run project-profile discovery** — only fill and append a
-genuine gap. Then read the diff under review. Still *run* the repo's lint/build/test to verify claims rather
-than guessing. If the scale target is genuinely unknown and a finding hinges on it, raise that as a question
-rather than assuming a number.
+scale/non-functional target** (which sets the bar for §1.2), and from `worklog.md` **just the Status block at
+the top** plus the specific `plan.md` (and prior `review-N.md`, if this is a re-review) it points you to —
+not the full chronological entry log, which only grows across a long stage and costs more to read on every
+later round for no benefit. **Trust `profile.md`; don't re-run project-profile discovery** — only fill and
+append a genuine gap. Then read the diff under review. Still *run* the repo's lint/build/test to verify claims
+rather than guessing. If the scale target is genuinely unknown and a finding hinges on it, raise that as a
+question rather than assuming a number.
 
 ## 1. What to flag (in priority order)
 

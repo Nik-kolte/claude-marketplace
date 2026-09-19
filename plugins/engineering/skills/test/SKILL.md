@@ -18,14 +18,17 @@ to at all (see `engineering:deploy`'s GATE E — a hard rule, no exceptions).
 
 Reuse the stage's **`profile.md`** and **`worklog.md`** from the `implement` working dir (e.g.
 `.engineering/<stage>/`) — the app's run/exercise commands, health endpoint, and key routes are already
-captured there, and the worklog records what was built. Don't re-run project-profile discovery yourself; the
-tester reads that shared context. If no `profile.md` exists yet, have the tester produce one as its first
-step. Read the approved stage target so the tester checks against **intended behavior**, not just crashes.
+captured there. You (the orchestrator) read the whole worklog to route; hand the tester only `profile.md` +
+the `worklog.md` **Status block** (what was built, its current pointer) — not an instruction to read the full
+entry log, which has been accumulating since implement started and only grows further across fix rounds.
+Don't re-run project-profile discovery yourself; the tester reads that shared context. If no `profile.md`
+exists yet, have the tester produce one as its first step. Read the approved stage target so the tester
+checks against **intended behavior**, not just crashes.
 
 ## Step 1 — Run the tester (one complete pass)
 
-Dispatch **`engineering:tester`** (model: `sonnet`) with the `profile.md` + `worklog.md` paths and the stage
-target, instructing it to **spot every issue in a single pass** and write ONE severity-ranked bug report
+Dispatch **`engineering:tester`** (model: `sonnet`) with `profile.md`, the `worklog.md` Status block, and the
+stage target, instructing it to **spot every issue in a single pass** and write ONE severity-ranked bug report
 itself to a durable path in the working dir (e.g. `bugs-N.md`) plus a thin worklog entry, covering:
 - build + lint clean,
 - health endpoint returns a real dependency check,
@@ -50,9 +53,11 @@ The tester returns **PASS** or **FAIL** with the report path.
 
 For a signed-off bug batch, re-enter **`engineering:implement`** (Step 4 dev↔reviewer loop) with `bugs-N.md`
 as the work item — the same `profile.md` + `worklog.md` carry over, so the developer resumes warm instead of
-re-orienting. Same escalation ladder (architect for stalls, human at GATE C for real design decisions). When
-the fixes are review-clean, **return here and re-run the tester** (Step 1) to confirm the batch is resolved
-and nothing regressed.
+re-orienting. "Resumes warm" means via the **Status block** (updated to point at `bugs-N.md`) plus that
+artifact itself — not by rereading the full accumulated history from every prior round of this stage. Same
+escalation ladder (architect for stalls, human at GATE C for real design decisions). When the fixes are
+review-clean, **return here and re-run the tester** (Step 1) to confirm the batch is resolved and nothing
+regressed.
 
 Repeat test → sign-off → fix → re-test until the tester returns PASS and the human signs off to proceed.
 

@@ -22,10 +22,17 @@ by pasting big content into your own context:
   discovered **scale/non-functional target**, the repo's **testing strategy** (framework, layers, what's
   worth covering — or "none yet"), and the path to the approved stage target. This is what kills the repeated
   "project-profile discovery." (`stage-prep` may have already seeded it — reuse it.)
-- **`worklog.md`** — the **append-only board** (a lightweight Jira ticket). It holds: a header (stage target
-  + links), an optional **work-items** table when the stage is decomposed, and a chronological **activity
-  log** where **each agent appends its own thin entry** (outcome + a pointer to its detail artifact — never a
-  transcript). This is what you read to route, and what the next agent reads to catch up.
+- **`worklog.md`** — the **append-only board** (a lightweight Jira ticket). It holds: a **Status block at the
+  top** (current phase, active work item, and the specific latest artifact paths — `plan.md`/`review-N.md`/
+  `bugs-N.md` — you keep this current as part of your mechanical bookkeeping), an optional **work-items**
+  table when the stage is decomposed, and a chronological **activity log** below it where **each agent
+  appends its own thin entry** (outcome + a pointer to its detail artifact — never a transcript). You read
+  the whole thing to route. **Agents you dispatch do not** — hand them `profile.md` + the Status block's
+  pointers + the specific artifact relevant to their dispatch, not "read `worklog.md`" unscoped. The entry
+  log is append-only and grows every round across a long stage; a blanket read-the-whole-file instruction
+  means every later dispatch in the stage pays a bigger token cost than the one before it for no benefit —
+  the Status block exists specifically so that doesn't happen. Full history is for you (routing) and for
+  debugging a stalled loop, not a default per-agent read.
 - **Detail artifacts** (each authored by the agent that produced it, linked from the worklog): `plan.md`
   (developer), `diff.patch` / diff range, `review-N.md` (reviewer), `item-<id>.md` (per parallel work item).
 
@@ -86,8 +93,10 @@ Judge the size of the change honestly and pick the lightest tier that fits:
 
 ## Step 2 — Developer writes the implementation plan
 
-Dispatch **`engineering:developer`** (model: `sonnet`), handing it the `profile.md` + `worklog.md` paths, to
-write a short self-contained plan to `plan.md`: files to change, what to reuse (with paths), how to verify,
+Dispatch **`engineering:developer`** (model: `sonnet`), handing it `profile.md` + the `worklog.md` Status
+block (this is the stage's first dispatch, so the block is still small — same scoped-handoff convention as
+every later round), to write a short self-contained plan to `plan.md`: files to change, what to reuse (with
+paths), how to verify,
 and — at the top — anything that reads as a **new decision or a deviation** from the approved design. For the
 **large + splittable** tier, also ask it to propose the **work-item breakdown** (independent items, each with
 a disjoint file set + order) in the plan. The developer appends its own thin entry to `worklog.md`.
@@ -103,16 +112,22 @@ Read `plan.md` (optionally have **`engineering:architect`** verify it against th
 
 ## Step 4 — Dev ↔ Reviewer loop (serial tier)
 
-Repeat until the reviewer approves (typically 1–2 rounds). Every dispatch gets the `profile.md` +
-`worklog.md` paths so the agent reads shared context instead of re-deriving it:
-1. Dispatch **`engineering:developer`** (`sonnet`) to implement the current plan / address the latest review.
-   It writes its own `worklog.md` entry and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED`.
+Repeat until the reviewer approves (typically 1–2 rounds). Every dispatch gets `profile.md` + the current
+Status-block pointers from `worklog.md` + the one specific artifact this round needs — not an instruction to
+read the whole worklog — so the agent reads exactly its shared context instead of re-deriving it or paying to
+reread every prior round:
+1. Dispatch **`engineering:developer`** (`sonnet`) to implement the current plan / address the latest review,
+   pointing it at `plan.md` (first round) or `review-N.md` (fix round). It writes its own `worklog.md` entry
+   and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED`.
 2. Generate the diff (against the pre-change baseline) into the working dir — this is your bookkeeping.
 3. Dispatch **`engineering:reviewer`** (model: `opus` — judgment) with the diff + `plan.md` path. It writes
    `review-N.md` and a worklog entry itself, and returns a verdict: **APPROVE** / **APPROVE-WITH-NITS** /
    **CHANGES-NEEDED**.
 4. **APPROVE** or **APPROVE-WITH-NITS** → exit the loop (nits are the dev's discretion). **CHANGES-NEEDED** →
    point the developer at `review-N.md` (by path) and loop.
+5. After each round, **update the Status block** in `worklog.md` to the new current artifact (`review-N.md`,
+   then the next round's pointer) so the next dispatch — in this loop or a later one — reads the small block,
+   not the growing log beneath it.
 
 Keep the reviewer's anti-over-engineering mandate in force: you want *correct and shippable for this
 product*, not gold-plated.
@@ -127,9 +142,9 @@ sets**:
    your infra bookkeeping — same `feature/` naming and `release/<stage>` base as the serial-tier rule above,
    just isolated into worktrees because they run concurrently.)
 2. **Dispatch developers concurrently** — one message, multiple `engineering:developer` (`sonnet`) calls,
-   each handed `profile.md`, `worklog.md`, its work item, and **its own worktree path**. To avoid corrupting
-   the shared board, each parallel developer writes its record to its **own `item-<id>.md`**, not
-   `worklog.md`.
+   each handed `profile.md`, the `worklog.md` Status block + its own work item's artifact pointer (not the
+   full worklog), and **its own worktree path**. To avoid corrupting the shared board, each parallel developer
+   writes its record to its **own `item-<id>.md`**, not `worklog.md`.
 3. **Consolidate.** After they all return, append their per-item outcomes into `worklog.md` (mark each work
    item `done`), merge each `feature/<id>-<description>` branch back into `release/<stage>` to reconcile them
    into a single integrated change, then remove the worktrees (`git worktree remove …`) and delete the merged
@@ -141,9 +156,11 @@ sets**:
 ## Step 5 — Escalate to the architect (NOT the human) when the loop stalls
 
 If the loop **hasn't converged after ~2 rounds**, or the developer returns `BLOCKED`:
-- Dispatch **`engineering:architect`** (`opus`, Mode B) with the `profile.md` + `worklog.md` paths and a
-  concise brief: the disagreement or blocker, the developer's lean, the reviewer's finding. The architect
-  records its decision in the worklog and returns it; feed it back and resume the loop from Step 4.
+- Dispatch **`engineering:architect`** (`opus`, Mode B) with `profile.md`, the `worklog.md` Status block, and
+  a concise brief: the disagreement or blocker, the developer's lean, the reviewer's finding. Not the full
+  worklog history — the brief you write *is* the relevant context; the architect doesn't need to rediscover
+  it. The architect records its decision in the worklog and returns it; feed it back and resume the loop from
+  Step 4.
 - The human is **not** pulled in just because the loop is slow — the architect resolves ordinary
   disagreements and blockers.
 
@@ -178,6 +195,8 @@ When the reviewer approves:
   summarizing their entries into the durable doc, not re-deriving them. Reconcile docs with reality.
 - Confirm `release/<stage>` is fully up to date (every `feature/`/`hotfix/` branch for this run merged in and
   deleted) before handing off — `test` and `deploy` build on this branch next.
+- **Update the `worklog.md` Status block** to reflect the phase closing (e.g. "implement complete, handing
+  off to test") so `engineering:test`'s first dispatch reads a current pointer, not a stale one from mid-loop.
 - Tell the human the build is review-clean and the next phase is **`engineering:test`**. Do not test or
   deploy from this skill.
 
