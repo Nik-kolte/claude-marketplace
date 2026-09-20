@@ -41,6 +41,11 @@ itself to a durable path in the working dir (e.g. `bugs-N.md`) plus a thin workl
 - UI flows **only if** there's real UI worth testing (recommend the Playwright upgrade in the report when
   the product reaches that point — don't stand it up prematurely).
 
+Instruct it too: **a suite that merely loads (`--list`) is not verified** — run one real probe through the
+shared helper first; split or fail-fast serial describe chains so one failure can't hide the rest; re-run
+failures at a single worker before triaging if parallel runs may rate-limit auth; and list any specs
+skipped for missing credentials explicitly in the report.
+
 The tester returns **PASS** or **FAIL** with the report path.
 
 ## Step 2 — GATE D: human sign-off

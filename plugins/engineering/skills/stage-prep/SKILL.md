@@ -54,6 +54,25 @@ Once approved, update the repo's docs to reflect the decision **before implement
 - If the design itself changed or a spec was missing, update the relevant design doc too — never leave code
   intent uncaptured in docs.
 
+**Before locking, run these checks:**
+- **Cited things exist.** Verify every file, function, and import path a task file cites actually exists
+  and passes the repo's lint restricted-import rules.
+- **Gates don't contradict.** Reconcile review gates against data-run/approval rules (e.g. "review before
+  merge" vs. "human runs the script first").
+- **Write-path audit.** For any stage introducing a frozen/derived snapshot or cached config, ask "which
+  write paths consult it — the snapshot or the live value?" and lock the answer as a decision.
+- **Production data operations.** For any stage with data migrations/backfills, add a section covering: who
+  holds prod credentials (agents may be unable to — then the human runs scripts from a runbook), ordering
+  vs. the code deploy, backup/rollback, endpoint guard, and read-only recon first. Scripts over ~100 rows
+  must emit progress output and be memoized/resumable.
+
+**Task format.** Ask: "are there genuinely concurrent tracks with real file-ownership conflicts?" **Yes** →
+a stage folder + per-track task files with a hard-gated foundation batch. **No** (default) → a single flat
+stage file with per-batch checklists. Either way keep: per-batch acceptance checklists where each AC names
+the layer it's tested at (API vs. UI), a "Reviewer must check" line per batch, a deviations register, and
+the locked decisions restated in the task itself (not only in the plan). Write the docs-reconciliation
+batch LAST, as a synthesis pass — not up front.
+
 Keep it reconciled with reality: if the code has already moved past what an old stage file claims, fix the
 doc.
 

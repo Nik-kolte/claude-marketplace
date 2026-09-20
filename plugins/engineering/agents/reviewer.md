@@ -63,6 +63,14 @@ matters; don't litigate it.
 Where a claim is checkable, check it — run the lint/build/test, read the actual called function. Prefer a
 confirmed finding to a plausible one, and label uncertainty honestly.
 
+### Claims about data and history
+
+- **Historical claims** ("always null", "never happened", "no old rows have X") — verify against the old
+  code or the actual data, not against today's types/schema. Current types describe what's allowed now, not
+  what was ever written.
+- **Counts** — name the query behind any count you use to conclude something about data. Never read a
+  derived counter (a cached total, a denormalized column) as a census; count the rows.
+
 ## 4. Return contract — ONE batched report, written by you
 
 **Write your report yourself** to the path the orchestrator gives you (e.g. `review-N.md`) — a single

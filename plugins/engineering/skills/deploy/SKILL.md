@@ -21,6 +21,14 @@ Present exactly what will happen and where (target environment, migrations to ru
 **Do not proceed until the human approves.** For a cloud target, first confirm the resources actually
 exist — see Step 3.
 
+**For stages with data migrations/backfills**, the GATE E presentation leads with the stage's **production
+data operations checklist** (from stage-prep): read-only recon done, backup/rollback, endpoint guard,
+ordering vs. the code deploy, and exactly who runs what (agents may lack prod credentials — then the human
+runs the scripts from a runbook). Run independent recon and doc work as **parallel dispatches**. Before
+any human-run script, **preflight-verify the branch/commit** it will run from, or hand over a clean
+worktree. Re-check any "known transient" note (e.g. lock timeouts) before trusting it — a repeated
+"transient" is a design flaw.
+
 **Production is a hard rule, no exceptions:** every deploy to production needs its own explicit human
 approval at the time it happens — a prior approval (of the stage, of a preview deploy of the same code, of
 testing in general) never carries over. **Preview/staging deploys are different** — testing and QA against

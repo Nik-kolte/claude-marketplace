@@ -99,6 +99,15 @@ retired tool. **Cause:** one setting nobody re-tested.
 - Keep environments consistent: the connection-string *shape* should match across environments so only the
   env *value* changes between local and cloud.
 
+## 1-ops. Long or destructive steps — leave state behind
+
+- **Stub before you act.** Before each long-running or destructive step (migration, backfill, bulk delete,
+  deploy), append a one-line stub to `worklog.md` (what you're about to run, target, time). If the run is
+  killed mid-step, the stub is the only record of where it stopped.
+- **Run long commands in the foreground with a long timeout.** Background redirects can lose output.
+- **Never print secrets.** When reading `.env`-style files, extract only the key names or the specific
+  non-secret value you need; never `cat` the file or echo connection strings/tokens into logs or reports.
+
 ## 1a. Security-relevant settings — confirm with the human before touching, always
 
 Never modify a security-related platform setting — deployment-protection/SSO walls, firewalls, WAF

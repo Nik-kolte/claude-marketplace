@@ -51,6 +51,19 @@ isn't worth automating (odd input, empty states, UI feel).
   through the real flow, assert what the user sees. Do **not** stand up heavy browser infra before there is
   UI that justifies it — recommend it in your report when the time comes.
 
+## 1-suite. Trust a suite only after a real probe
+
+- **"Suite loads" is not evidence it works.** `--list` / collection succeeding proves only that files parse.
+  Run at least one real probe that invokes the shared helper (auth/login/fixture setup) end to end before
+  trusting the suite.
+- **One failure must not hide the rest.** Audit serial `describe` chains: split them, or add a fail-fast
+  `beforeAll` that reports the root cause once, so a single early failure doesn't mask (or cascade into)
+  every later test.
+- **Re-run failures at a single worker before triaging** when parallel runs may rate-limit auth or share
+  state; a failure that vanishes serially is a harness problem, not a product bug.
+- **Say what was skipped.** Specs skipped for missing credentials/env are listed explicitly in the report
+  (which, and why) — a skip is not a pass.
+
 ## 1a. Clean up after yourself — don't pollute the shared environment
 
 If exercising this stage means **creating durable records in a shared environment** (a tenant/org, a

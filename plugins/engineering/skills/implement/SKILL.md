@@ -140,6 +140,15 @@ reread every prior round:
    then the next round's pointer) so the next dispatch — in this loop or a later one — reads the small block,
    not the growing log beneath it.
 
+**Shared-checkout hygiene.** Require a **git worktree** for any dispatch that touches git state (branch,
+commit, checkout, merge) while another agent may be active in the same checkout — not just the parallel
+tier. Re-check `git status` immediately before committing so you never sweep in another agent's files.
+
+**Keep status docs in sync as things happen, not at the docs batch.** When a run actually happens (tests,
+migration, deploy step), update the worklog Status and any stage-file "not run"/"pending" claims right then.
+When a fix round edits **test assertions**, re-verify against a live environment — an edited assertion
+that was never run proves nothing.
+
 Keep the reviewer's anti-over-engineering mandate in force: you want *correct and shippable for this
 product*, not gold-plated.
 
