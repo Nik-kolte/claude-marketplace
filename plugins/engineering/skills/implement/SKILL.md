@@ -134,8 +134,15 @@ reread every prior round:
 3. Dispatch **`engineering:reviewer`** (model: `opus` — judgment) with the diff + `plan.md` path. It writes
    `review-N.md` and a worklog entry itself, and returns a verdict: **APPROVE** / **APPROVE-WITH-NITS** /
    **CHANGES-NEEDED**.
-4. **APPROVE** or **APPROVE-WITH-NITS** → exit the loop (nits are the dev's discretion). **CHANGES-NEEDED** →
-   point the developer at `review-N.md` (by path) and loop.
+4. **APPROVE** or **APPROVE-WITH-NITS** → before exiting the loop, **check `worklog.md` for this batch's
+   developer entry** (not just the reviewer's — both write one, but they're separate writes and either can
+   be skipped under time pressure). Missing entry → have the developer append it now, even a terse
+   outcome-only line, **before** you merge and move on. Do not let a batch merge as "done" with no durable
+   record beyond the merge commit message — `.engineering/**` scratch files (`review-N.md`, `plan.md`) are
+   gitignored and not guaranteed to survive between sessions, so the worklog is the only artifact that
+   reliably outlives the dispatch that wrote it. (Observed gap: Stage 23 Batches 3, 4, and 6 shipped with no
+   worklog Activity-log entry at all — only recoverable via `git log` because the scratch files happened to
+   still be on disk.) **CHANGES-NEEDED** → point the developer at `review-N.md` (by path) and loop.
 5. After each round, **update the Status block** in `worklog.md` to the new current artifact (`review-N.md`,
    then the next round's pointer) so the next dispatch — in this loop or a later one — reads the small block,
    not the growing log beneath it.

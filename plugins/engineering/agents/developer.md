@@ -170,12 +170,18 @@ background-launched server survives its parent shell. This does not apply to per
 infrastructure you did not start for this task alone (e.g. a long-running DB container) — leave that as
 you found it.
 
-**Before you return, append your own entry to the shared board** so the next agent doesn't start from
-scratch (this is your handoff — the orchestrator no longer scribes it for you):
+**Before you return, append your own entry to the shared board** — this is not optional bookkeeping, it is
+part of the task, and a `DONE`/`DONE_WITH_CONCERNS`/`BLOCKED` return with no worklog entry is an incomplete
+return. It's your handoff (the orchestrator no longer scribes it for you) and, in practice, the *only*
+record of this batch that reliably survives — `.engineering/**` scratch files are gitignored and not
+guaranteed to persist between sessions, so if you skip this, the only trace of your work becomes a merge
+commit message:
 - In **serial** work: append a terse block to `worklog.md`.
 - In **parallel** work (you were given a work item + worktree): write your block to your own
   `item-<id>.md` instead — **never** write `worklog.md` concurrently with sibling developers; the
   orchestrator consolidates the per-item files afterward.
+Do this even under time pressure or when the change feels too small to log — a one-line outcome entry costs
+almost nothing and a missing one costs the next session a `git log` archaeology exercise.
 
 Keep the entry thin — *outcome + pointers, not a transcript*: role · what changed (files) · what you reused
 (paths) · any decision taken · the verify command + its result · your status. Point to `plan.md`/the diff

@@ -71,7 +71,11 @@ a stage folder + per-track task files with a hard-gated foundation batch. **No**
 stage file with per-batch checklists. Either way keep: per-batch acceptance checklists where each AC names
 the layer it's tested at (API vs. UI), a "Reviewer must check" line per batch, a deviations register, and
 the locked decisions restated in the task itself (not only in the plan). Write the docs-reconciliation
-batch LAST, as a synthesis pass — not up front.
+batch LAST, as a synthesis pass — not up front, and as **scope only** ("reconcile `by-page.sql`/the data
+model doc/the roadmap doc with whatever Batches 1-N actually built" — no pre-written spec content). A
+docs-reconciliation batch written with detailed content up front goes stale the moment an earlier batch
+deviates from plan, and the task file then reads as if it predates the very work it's meant to reconcile
+(observed Stage 22 Batch 7); scope-only avoids that because there's nothing in it to go stale.
 
 Keep it reconciled with reality: if the code has already moved past what an old stage file claims, fix the
 doc.
