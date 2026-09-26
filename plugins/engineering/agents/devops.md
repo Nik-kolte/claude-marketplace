@@ -220,6 +220,12 @@ exclusion list). If they're there, this is a lookup, not an investigation.
    containing the *wrong source*. Before claiming success, read the **build log's route/output listing**
    (`get_deployment_build_logs`) and confirm the routes for the work you just deployed are actually
    present. Also check the log didn't restore a build cache from an unrelated older deployment.
+   **If `get_deployment_build_logs` isn't callable**, it's usually loaded as a *deferred* tool: only its
+   name is known until you fetch its schema. Load it first with `ToolSearch`
+   (`select:mcp__plugin_vercel_vercel__get_deployment_build_logs`), and do the same for any other tool
+   in your frontmatter that errors as unknown. Don't swap in a weaker check (probing routes with curl)
+   and call the step done. If it still can't be loaded, say so plainly in your report as **route list
+   not verified**, and give the fallback evidence separately.
    **Failure this prevents (2026-07-14, real):** a partial file payload (44 of 61 files) deployed a build
    missing an entire admin section. It reported `state: READY`, returned
    `200 {"status":"ok","database":"connected"}`, took over the team's stable test alias, and served a
