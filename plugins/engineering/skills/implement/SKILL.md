@@ -151,6 +151,12 @@ reread every prior round:
 commit, checkout, merge) while another agent may be active in the same checkout — not just the parallel
 tier. Re-check `git status` immediately before committing so you never sweep in another agent's files.
 
+**Worktree location — one place, every purpose.** Every worktree an agent creates — parallel items,
+hotfixes, merge checkouts, a clean checkout for a human-run script — goes under `../.worktrees/<name>`
+(sibling of the repo), never loose next to the repo as `../<repo>-<something>`. When done:
+`git worktree remove`, `git worktree prune`, and confirm the folder is actually gone (on Windows a locked
+file can leave an empty directory behind — delete it).
+
 **Keep status docs in sync as things happen, not at the docs batch.** When a run actually happens (tests,
 migration, deploy step), update the worklog Status and any stage-file "not run"/"pending" claims right then.
 When a fix round edits **test assertions**, re-verify against a live environment — an edited assertion
