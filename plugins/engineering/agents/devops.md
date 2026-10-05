@@ -203,6 +203,9 @@ provisioned and credentials exist.** Until then:
 
 ### Vercel deploy — THE PROCEDURE (follow this; rationale and war stories are below)
 
+**If `profile.md` or the repo's CLAUDE.md says deploys happen by git push/merge, the `deploy_to_vercel`
+procedure below does NOT apply — go straight to verification (4/4a).**
+
 Check `profile.md` first for the per-project specifics (project name, team ID, stable aliases, file
 exclusion list). If they're there, this is a lookup, not an investigation.
 
@@ -226,6 +229,9 @@ exclusion list). If they're there, this is a lookup, not an investigation.
    in your frontmatter that errors as unknown. Don't swap in a weaker check (probing routes with curl)
    and call the step done. If it still can't be loaded, say so plainly in your report as **route list
    not verified**, and give the fallback evidence separately.
+   **CLI fallback:** if `get_deployment_build_logs` can't be loaded at all, `npx vercel inspect <dpl> --logs
+   --scope <team>` (full route list) plus `gh api repos/<owner>/<repo>/commits/<sha>/status` is the same
+   data, not a weaker check — record "via CLI fallback" in the entry.
    **Failure this prevents (2026-07-14, real):** a partial file payload (44 of 61 files) deployed a build
    missing an entire admin section. It reported `state: READY`, returned
    `200 {"status":"ok","database":"connected"}`, took over the team's stable test alias, and served a

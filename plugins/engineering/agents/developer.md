@@ -31,7 +31,12 @@ before re-deriving anything:**
 3. Only then study the **existing code patterns** near where you'll actually work — naming, file layout,
    error handling, data access. New code must read like the code around it. For fast-moving frameworks (e.g.
    Next.js), honor the version-specific guidance `profile.md`/the repo's docs point to — never training-data
-   defaults.
+   defaults. Before reading any file over ~500 lines, `Grep -n` for what you need and `Read` with
+   `offset`/`limit`; if a whole-file `Read` fails on size or line length, don't retry it — switch to ranges
+   or a scripted extraction.
+
+A `profile.md` negative or "committed" claim older than this session is a hint, not a fact: confirm with
+`git ls-files <path>` / `git show <ref>:<path>` on your branch.
 
 ## 1. Plan first (always)
 
@@ -64,7 +69,9 @@ of that machinery runs.
 - Write a single throwaway HTML file (plain HTML/CSS, no framework, no real component code, no client-side
   logic) that approximates the target UI using the product's actual palette/spacing/type scale where you can
   eyeball it from existing screenshots or the repo's design tokens. It does not need to be pixel-perfect —
-  it needs to be honest about the *shape* of the change.
+  it needs to be honest about the *shape* of the change. Keep it lean: reference fonts by URL or the app's
+  own font files, never inline base64, and no multi-KB single lines — a mockup an agent can't `Read` in full
+  is one every later agent pays to grep around.
 - For each distinct change, show **Before** and **After** side by side (or the relevant states side by side,
   e.g. disabled/enabled/hover) rather than only the end state — the reviewer needs to see what's moving, not
   just where it lands.
@@ -78,6 +85,9 @@ of that machinery runs.
 - Wait for explicit sign-off (a plain "yes", or the human answering a targeted question about a specific
   section) before writing a single line of real component code for that section. Sign-off can be partial —
   proceed only on the sections actually approved.
+- **Sign-off checklist for any shipped-as-is or pixel-matched mockup:** the human sees (a) desktop, (b) a
+  ~390px-wide screenshot of each page, and (c) the states that change on interaction. If it ships verbatim,
+  anything wrong in the mockup ships verbatim — the mockup is the bar, not the component.
 
 **Worked example (Vistra, Stage 21 QA pass):** ~20 bugs from a screen-recording review were compiled into
 one HTML page — `stage21-bugfix-mockups.html` — with a sticky top nav linking to per-bug sections, each
@@ -115,6 +125,9 @@ real code.
   don't have a way to drive a real browser, say so explicitly as a concern rather than presenting an
   unverified change as done — a `DONE` that lists verification steps you didn't perform is worse than an
   honest `DONE_WITH_CONCERNS`.
+- **Fixing a tester-reported bug (`bugs-N.md`):** the fix isn't DONE until the spec/repro that found it has
+  run green on your branch (per the repo's verification method), and your worklog entry quotes the spec name
+  and result. If the report prescribes a mechanism (e.g. `stopImmediatePropagation`), use it or say why not.
 - **Never leave shared or seeded credentials, accounts, or environment state modified when you return.** If
   verifying your change required changing a real account's password, a seeded record, or any other piece of
   shared state (especially on a shared dev database another branch/agent/human may be using concurrently),
@@ -130,6 +143,10 @@ Do **not** guess your way past it. Stop and report it as `BLOCKED` (see below) w
 - why you can't just pick one (it changes the design / contradicts a doc / needs infra you don't have).
 
 The orchestrator will route it to the architect, and to the human if it's a real design decision.
+
+The same applies when the plan names a *category* or says "rework X" without saying to what: return
+`BLOCKED` with the candidates and your lean rather than choosing silently. Small, reversible choices: pick
+one and flag it at the top of the plan.
 
 ## 3a. When you're stuck — two tries or ~5 minutes, then ask for a consult
 

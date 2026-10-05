@@ -21,10 +21,16 @@ by pasting big content into your own context:
   facts, build/lint/test/migrate/seed commands, health endpoint + key routes, where docs/tracker live, the
   discovered **scale/non-functional target**, the repo's **testing strategy** (framework, layers, what's
   worth covering — or "none yet"), and the path to the approved stage target. This is what kills the repeated
-  "project-profile discovery." (`stage-prep` may have already seeded it — reuse it.)
+  "project-profile discovery." (`stage-prep` may have already seeded it — reuse it.) **Single owner:**
+  `stage-prep` writes it; if missing, dispatch ONE agent to create it — never write a placeholder first.
+  Others only append, dated, with "verified: <command>". A negative or "committed" claim ("X is absent",
+  "spec Z exists") is valid only with a dated command — re-check with `git ls-files`/`ls` on the current
+  branch before relying on one older than this session.
 - **`worklog.md`** — the **append-only board** (a lightweight Jira ticket). It holds: a **Status block at the
   top** (current phase, active work item, and the specific latest artifact paths — `plan.md`/`review-N.md`/
-  `bugs-N.md` — you keep this current as part of your mechanical bookkeeping), an optional **work-items**
+  `bugs-N.md` — you keep this current as part of your mechanical bookkeeping, plus an **Open gates** line:
+  checks the reviewer deferred or that can't run yet — live regression, real sign-in, flag-gated paths,
+  human-run scripts — each `open`/`done` with who runs it; update it at every handoff), an optional **work-items**
   table when the stage is decomposed, and a chronological **activity log** below it where **each agent
   appends its own thin entry** (outcome + a pointer to its detail artifact — never a transcript). You read
   the whole thing to route. **Agents you dispatch do not** — hand them `profile.md` + the Status block's
@@ -60,6 +66,11 @@ mechanical bookkeeping and infra: scaffold the `worklog.md` header and an empty 
 agents' worklog entries. If you catch yourself opening a source file to figure out what's going on, stop —
 that's an agent's job.
 
+**Exception handling:** if a tool you're about to use (e.g. an Artifact publish) demands a full read of a
+large source first, don't satisfy it yourself — dispatch an agent that has the tool, or have a developer
+produce a trimmed copy (no inlined fonts, no minified lines) and publish from that. If it truly must be you,
+tell the human and read only the trimmed copy.
+
 ## Step 0 — Orient & load the approved target
 
 Ensure `profile.md` exists in the working dir: if `stage-prep` seeded it, reuse it; if not, dispatch a cheap
@@ -67,6 +78,10 @@ agent (developer, `haiku`/`sonnet`) to produce it — **you don't do discovery y
 `worklog.md` with the stage header and Status block, and an empty `retro.md`. Then read the **approved stage
 target** from the tracker (the worklog links it). Everything you build is measured against this. If there's
 no approved stage, stop and point the human to `engineering:stage-prep`.
+
+When a human instruction names a *category* ("the backfills", "rework the CTA") and the docs suggest more
+than one concrete candidate, don't infer — ask one question listing the candidates before dispatching any
+build.
 
 ## Branching discipline (applies to every step below)
 
@@ -100,7 +115,10 @@ Judge the size of the change honestly and pick the lightest tier that fits:
 - **Large + splittable:** only when the stage is genuinely big **and** decomposes into independent pieces
   with **disjoint file sets**. Run the **parallel developer** flow (Step 4a) — the developer's plan proposes
   the work-item breakdown, and you dispatch developers concurrently in isolated worktrees. If the work can't
-  be cleanly split into disjoint files, it isn't this tier — stay serial.
+  be cleanly split into disjoint files, it isn't this tier — stay serial. Before dispatching any parallel
+  developer, re-read the stage's open questions and batch list and confirm none can change *what is being
+  built* (e.g. "port to components" vs "ship as-is", an unsigned-off mockup, an unresolved "rework X"). If one
+  can, resolve it first (architect or human) — parallelism multiplies the cost of a re-scope.
 
 ## Step 2 — Developer writes the implementation plan
 
@@ -149,7 +167,10 @@ reread every prior round:
 
 **Shared-checkout hygiene.** Require a **git worktree** for any dispatch that touches git state (branch,
 commit, checkout, merge) while another agent may be active in the same checkout — not just the parallel
-tier. Re-check `git status` immediately before committing so you never sweep in another agent's files.
+tier. Re-check `git status` immediately before committing so you never sweep in another agent's files. A fresh
+worktree has no installed deps or generated code: do the install once, at creation, per `profile.md`'s
+"Worktree setup", and record the verified result there. Never junction/symlink a checkout whose install you
+haven't confirmed complete (check `.bin` exists).
 
 **Worktree location — one place, every purpose.** Every worktree an agent creates — parallel items,
 hotfixes, merge checkouts, a clean checkout for a human-run script — goes under `../.worktrees/<name>`
@@ -160,7 +181,8 @@ file can leave an empty directory behind — delete it).
 **Keep status docs in sync as things happen, not at the docs batch.** When a run actually happens (tests,
 migration, deploy step), update the worklog Status and any stage-file "not run"/"pending" claims right then.
 When a fix round edits **test assertions**, re-verify against a live environment — an edited assertion
-that was never run proves nothing.
+that was never run proves nothing. The same goes for a product-code fix to a tester-found bug: it isn't done
+until the spec/repro that found it has run green.
 
 Keep the reviewer's anti-over-engineering mandate in force: you want *correct and shippable for this
 product*, not gold-plated.
@@ -177,7 +199,9 @@ sets**:
 2. **Dispatch developers concurrently** — one message, multiple `engineering:developer` (`sonnet`) calls,
    each handed `profile.md`, the `worklog.md` Status block + its own work item's artifact pointer (not the
    full worklog), and **its own worktree path**. To avoid corrupting the shared board, each parallel developer
-   writes its record to its **own `item-<id>.md`**, not `worklog.md`.
+   writes its record to its **own `item-<id>.md`**, not `worklog.md`. Only parallelize batches whose inputs
+   are final (signed-off mockup committed, decisions locked); anything still ambiguous goes serial, after the
+   ambiguity is closed.
 3. **Consolidate.** After they all return, append their per-item outcomes into `worklog.md` (mark each work
    item `done`), merge each `feature/<id>-<description>` branch back into `release/<stage>` to reconcile them
    into a single integrated change, then remove the worktrees (`git worktree remove …`) and delete the merged
@@ -220,6 +244,10 @@ Present the decision and the options; the human decides, and the loop continues 
 reaches a 3rd round still unresolved, that is almost always a sign you're at GATE C — escalate rather than
 spin.)
 
+Before relaying any "blocked pending <credential/env/access>" to the human, check it against the suite's own
+required-env list and the failing output — an agent's "blocked" is a hypothesis. Relay the evidence, not the
+claim.
+
 ## Step 7 — Finish the phase
 
 When the reviewer approves:
@@ -230,6 +258,7 @@ When the reviewer approves:
   deleted) before handing off — `test` and `deploy` build on this branch next.
 - **Update the `worklog.md` Status block** to reflect the phase closing (e.g. "implement complete, handing
   off to test") so `engineering:test`'s first dispatch reads a current pointer, not a stale one from mid-loop.
+  Update the **Open gates** line too; `engineering:test` must close or explicitly carry over each one.
 - Tell the human the build is review-clean and the next phase is **`engineering:test`**. Do not test or
   deploy from this skill.
 

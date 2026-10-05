@@ -17,14 +17,19 @@ phase is a collaboration with them.
 Read the repo's guidance (`CLAUDE.md`/`AGENTS.md`/`README.md`) and locate: the design/product docs, the
 stage/cycle tracker if one exists (e.g. `development-cycles/`), the current build stage, and the locked tech
 stack. Read only what's relevant. If the repo has no tracker convention, plan to write the stage into a
-sensible default (a `docs/` spec file) and mention that choice to the human.
+sensible default (a `docs/` spec file) and mention that choice to the human. Don't read code from the main
+checkout without confirming `git branch --show-current` and that it's current with the base; prefer
+`git show <base>:<path>`.
 
 **Seed the shared brief for the downstream phases.** Once the stage is approved (Step 3), write what you
 learned here into `.engineering/<stage>/profile.md` — stack + manifest facts, build/lint/test/migrate/seed
 commands, health endpoint + key routes, where docs/tracker live, the **scale/non-functional target**, the
 repo's **testing strategy** (framework, layers, what's worth covering — or "none yet" if undecided), and the
-path to the approved stage target. `implement`, `test`, and `deploy` reuse this instead of each
-re-discovering it, so every agent starts warm. Keep it terse and factual.
+path to the approved stage target — and a **"Known environment facts"** block for testers: the test
+tenant/org identifier, where each credential comes from (required vs. optional, per suite), specs that can't
+run against the test DB (and why), and the **deploy-freshness gate** (how to know the environment serves the
+commit under test). `implement`, `test`, and `deploy` reuse this instead of each re-discovering it, so every
+agent starts warm. Keep it terse and factual; date each fact.
 
 ## Step 1 — Brainstorm with the architect + human
 
@@ -50,7 +55,9 @@ everything downstream is measured against — take it seriously.
 
 Once approved, update the repo's docs to reflect the decision **before implementation**:
 - Write/append the stage file in the tracker (or the default location from Step 0): the target, scope,
-  in/out-of-scope, open decisions resolved, and an empty **Execution Log** for the build to fill in.
+  in/out-of-scope, open decisions resolved, and an empty **Execution Log** for the build to fill in. The
+  architect has no Edit tool by design: it writes *new* files and returns paste-ready text for edits to
+  existing docs — dispatch a developer (`haiku`) to apply those verbatim and report the diff.
 - If the design itself changed or a spec was missing, update the relevant design doc too — never leave code
   intent uncaptured in docs.
 
@@ -65,6 +72,16 @@ Once approved, update the repo's docs to reflect the decision **before implement
   holds prod credentials (agents may be unable to — then the human runs scripts from a runbook), ordering
   vs. the code deploy, backup/rollback, endpoint guard, and read-only recon first. Scripts over ~100 rows
   must emit progress output and be memoized/resumable.
+- **Cheapest faithful implementation.** For any batch whose source of truth is a signed-off static artifact
+  (HTML mockup, exported design), ask the human: "can this ship as-is rather than be re-implemented as
+  components?" Record the answer as a locked decision. Note any mockup behaviour coupled across regions
+  (e.g. focus state driving a scene) so the batch list anticipates a client wrapper.
+- **Mockup sign-off.** For any shipped-as-is or pixel-matched mockup, the human sees desktop, a ~390px
+  screenshot of each page, and the states that change on interaction — shipped verbatim means bugs ship
+  verbatim. Keep mockups lean (no inlined base64 fonts, no multi-KB lines).
+- **Source-of-truth artifacts are committed before the batch that copies them.** If an acceptance
+  criterion says "byte-identical to X", X must be a committed blob (path + commit sha in the task); make
+  "commit the signed-off artifacts" Batch 0's last step.
 
 **Task format.** Ask: "are there genuinely concurrent tracks with real file-ownership conflicts?" **Yes** →
 a stage folder + per-track task files with a hard-gated foundation batch. **No** (default) → a single flat
@@ -81,6 +98,11 @@ Keep it reconciled with reality: if the code has already moved past what an old 
 doc.
 
 ## Step 4 — Cut the stage branch
+
+Before cutting, list the repo's definition-of-done gates (CLAUDE.md rules: regression suite, lint, type
+check, coverage script) and confirm each one's files/scripts exist on the base (`git ls-tree <base> --
+<path>`). If a gate lives on another branch, tell the human before cutting and propose cutting from the
+branch that has it, or merging it first.
 
 **`master`/`main` is never edited directly — no exceptions.** From an up-to-date `master`, create and check
 out `release/<stage>` (e.g. `release/stage-2`) — this is the branch `implement` will build on for the whole

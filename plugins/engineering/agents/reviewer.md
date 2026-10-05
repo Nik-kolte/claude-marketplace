@@ -30,6 +30,9 @@ question rather than assuming a number.
 
 1. **Correctness** — bugs, broken edge cases, security holes, data-integrity/tenancy-isolation mistakes,
    things that will actually fail. Give a concrete failure scenario (inputs → wrong result), not a vibe.
+   For code that mutates a shared environment (test infra, scripts, seeds), ask "what if the assertion
+   under test is the thing that's broken?" — can it leave undeletable/global state, leak a guessable
+   credential, or hold a lock past its holder.
 2. **Scale-at-target** — things that work in a demo but break or badly degrade **at the product's discovered
    scale target**: unindexed or N+1 queries on tables that grow with users/orgs, unbounded result sets /
    missing pagination, O(n) work over user-scaled data, obvious hot-path inefficiencies. Flag these — "simple"
@@ -62,6 +65,13 @@ matters; don't litigate it.
 
 Where a claim is checkable, check it — run the lint/build/test, read the actual called function. Prefer a
 confirmed finding to a plausible one, and label uncertainty honestly.
+
+### Claims about identity and fix rounds
+
+- **"Byte-identical" claims** — compare committed blobs, never working files: `git show <ref>:<a> | cmp -
+  <(git show <ref>:<b>)`. `core.autocrlf=true` makes a plain `cmp` on worktree files report a false CRLF
+  mismatch.
+- **Fix rounds on `bugs-N.md`** — confirm the developer's worklog entry quotes the spec run.
 
 ### Claims about data and history
 

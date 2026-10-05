@@ -21,6 +21,7 @@ Reuse the stage's **`profile.md`** and **`worklog.md`** from the `implement` wor
 captured there. You (the orchestrator) read the whole worklog to route; hand the tester only `profile.md` +
 the `worklog.md` **Status block** (what was built, its current pointer) — not an instruction to read the full
 entry log, which has been accumulating since implement started and only grows further across fix rounds.
+Read the Status block's **Open gates** line first and list each gate as pass/fail/carried in the report.
 Don't re-run project-profile discovery yourself; the tester reads that shared context. If no `profile.md`
 exists yet, have the tester produce one as its first step. Read the approved stage target so the tester
 checks against **intended behavior**, not just crashes. Reuse `retro.md` from the same working dir too — it
@@ -54,6 +55,9 @@ The tester returns **PASS** or **FAIL** with the report path.
 - **FAIL (bugs found):** present the batched bug report. **The human signs off the bug report before any fix
   work begins** — you approve each batch, then it goes to the developer. (This is deliberate: the human
   stays in control of what gets fixed and how.)
+- Before relaying any "blocked pending <credential/env/access>" to the human, check it against the suite's
+  own required-env list (README/config) and the failing output. A tester's "blocked" is a hypothesis; if the
+  spec marks the variable optional, it isn't a blocker. Relay the evidence, not the claim.
 
 ## Step 3 — Fix loop (bugs → back into implement)
 

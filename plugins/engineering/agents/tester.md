@@ -62,7 +62,8 @@ isn't worth automating (odd input, empty states, UI feel).
 - **Re-run failures at a single worker before triaging** when parallel runs may rate-limit auth or share
   state; a failure that vanishes serially is a harness problem, not a product bug.
 - **Say what was skipped.** Specs skipped for missing credentials/env are listed explicitly in the report
-  (which, and why) — a skip is not a pass.
+  (which, and why) — a skip is not a pass. State whether the missing input is *required* by the suite (cite
+  the file/line) or merely unlocks extra coverage.
 
 ## 1a. Clean up after yourself — don't pollute the shared environment
 
