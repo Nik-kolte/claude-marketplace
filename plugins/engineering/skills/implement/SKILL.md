@@ -178,8 +178,8 @@ worktree has no installed deps or generated code: do the install once, at creati
 haven't confirmed complete (check `.bin` exists).
 
 **Worktree location — one place, every purpose.** Every worktree an agent creates — parallel items,
-hotfixes, merge checkouts, a clean checkout for a human-run script — goes under `../.worktrees/<name>`
-(sibling of the repo), never loose next to the repo as `../<repo>-<something>`. When done:
+hotfixes, merge checkouts, a clean checkout for a human-run script — goes under the repo's own `.worktrees/<name>` (gitignored)
+(inside the repo), never loose next to it as `../<repo>-<something>`. When done:
 `git worktree remove`, `git worktree prune`, and confirm the folder is actually gone (on Windows a locked
 file can leave an empty directory behind — delete it).
 
@@ -198,7 +198,7 @@ When Step 1 selected the large tier and the developer's plan gave a work-item br
 sets**:
 1. **Isolate each item.** For each work item, create a worktree on its own `feature/<id>-<description>`
    branch cut from `release/<stage>`, so parallel developers don't collide in one working tree:
-   `git worktree add ../.worktrees/<stage>-<id> -b feature/<id>-<description> release/<stage>`. (This is
+   `git worktree add .worktrees/<stage>-<id> -b feature/<id>-<description> release/<stage>`. (This is
    your infra bookkeeping — same `feature/` naming and `release/<stage>` base as the serial-tier rule above,
    just isolated into worktrees because they run concurrently.)
 2. **Dispatch developers concurrently** — one message, multiple `engineering:developer` (`sonnet`) calls,

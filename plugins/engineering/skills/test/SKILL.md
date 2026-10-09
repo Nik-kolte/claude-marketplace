@@ -22,8 +22,9 @@ captured there. You (the orchestrator) read the whole worklog to route; hand the
 the `worklog.md` **Status block** (what was built, its current pointer) — not an instruction to read the full
 entry log, which has been accumulating since implement started and only grows further across fix rounds.
 Read the Status block's **Open gates** line first and list each gate as pass/fail/carried in the report.
-Don't re-run project-profile discovery yourself; the tester reads that shared context. If no `profile.md`
-exists yet, have the tester produce one as its first step. Read the approved stage target so the tester
+Don't re-run project-profile discovery yourself; the tester reads that shared context. If the working dir or
+`profile.md` is missing (check on disk — don't assume), have the tester create it as its first step. Read the approved stage
+target so the tester
 checks against **intended behavior**, not just crashes. Reuse `retro.md` from the same working dir too — it
 carries over from `implement`; keep appending to it, don't start a fresh one.
 
@@ -62,7 +63,8 @@ The tester returns **PASS** or **FAIL** with the report path.
   stays in control of what gets fixed and how.)
 - Before relaying any "blocked pending <credential/env/access>" to the human, check it against the suite's
   own required-env list (README/config) and the failing output. A tester's "blocked" is a hypothesis; if the
-  spec marks the variable optional, it isn't a blocker. Relay the evidence, not the claim.
+  spec marks the variable optional, it isn't a blocker. Relay the evidence, not the claim. Hold your own
+  briefs to the same bar: verify any account/credential role you name against the env file or user list first.
 - **Attribute agent claims clearly.** When presenting results to the human (e.g. "the suite is passing"),
   name the source — "per the tester, `bugs-N.md`" — and match any task notification the human receives to
   the agent run id (tester dispatch N, run id R) that produced it. Do not present a tester's claim as
@@ -74,7 +76,8 @@ For a signed-off bug batch, re-enter **`engineering:implement`** (Step 4 dev↔r
 as the work item — the same `profile.md` + `worklog.md` carry over, so the developer resumes warm instead of
 re-orienting. "Resumes warm" means via the **Status block** (updated to point at `bugs-N.md`) plus that
 artifact itself — not by rereading the full accumulated history from every prior round of this stage. Same
-escalation ladder (architect for stalls, human at GATE C for real design decisions). When the fixes are
+escalation ladder (architect for stalls, human at GATE C for real design decisions). The fix-round commit
+also updates the stage file's open-follow-ups list (items it resolved). When the fixes are
 review-clean, **return here and re-run the tester** (Step 1) to confirm the batch is resolved and nothing
 regressed.
 

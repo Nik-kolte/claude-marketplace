@@ -26,7 +26,7 @@ data operations checklist** (from stage-prep): read-only recon done, backup/roll
 ordering vs. the code deploy, and exactly who runs what (agents may lack prod credentials — then the human
 runs the scripts from a runbook). Run independent recon and doc work as **parallel dispatches**. Before
 any human-run script, **preflight-verify the branch/commit** it will run from, or hand over a clean
-worktree (under `../.worktrees/<name>`, like every worktree — see implement's "Worktree location" rule;
+worktree (under the repo's `.worktrees/<name>`, like every worktree — see implement's "Worktree location" rule;
 remove it once the script has run). Re-check any "known transient" note (e.g. lock timeouts) before trusting it — a repeated
 "transient" is a design flaw.
 
