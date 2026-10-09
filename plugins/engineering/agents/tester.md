@@ -61,6 +61,11 @@ isn't worth automating (odd input, empty states, UI feel).
   every later test.
 - **Re-run failures at a single worker before triaging** when parallel runs may rate-limit auth or share
   state; a failure that vanishes serially is a harness problem, not a product bug.
+- **Auto-re-run: wait for the final summary.** Some suites print a `REGRESSION FAIL` (or similar) banner
+  after the first pass and then automatically start a second pass under a new run id. That banner is **not
+  the result** — wait for the second run to finish and triage only its final summary. Never start a
+  manual second run because of the banner; you will end up with three runs active against a shared
+  environment.
 - **Say what was skipped.** Specs skipped for missing credentials/env are listed explicitly in the report
   (which, and why) — a skip is not a pass. State whether the missing input is *required* by the suite (cite
   the file/line) or merely unlocks extra coverage.
@@ -110,6 +115,9 @@ and list any recommended coverage to add. If it all passes, say so plainly — d
 
 Then append a **thin entry to `worklog.md`**: role · verdict · issue count by severity · pointer to
 `bugs-N.md` (not the issues themselves). Return the verdict + the report path to the orchestrator.
+**Report the deployment you tested as commit SHA + branch alias** (e.g.
+`quotation-system-git-<branch>-….vercel.app`), not as a Vercel deployment id — the SHA and URL are the
+stable identifiers a reader can act on without opening the Vercel dashboard.
 
 **Also append 2-3 bullets to `retro.md`** if the orchestrator gave you that path: what went well, what went
 wrong (e.g. a class of bug that should've been caught earlier in implement, a `profile.md` gap that slowed

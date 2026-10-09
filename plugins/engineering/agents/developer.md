@@ -109,6 +109,11 @@ real code.
   repo has **no** testing convention yet, don't silently skip and don't unilaterally introduce a framework —
   surface it as a `BLOCKED` decision (which framework/layers) so the orchestrator can gate it. (Black-box
   integration/API tests are the tester's job, not yours.)
+- **For changes to a data-access or permission layer:** at plan time, grep the repo's test suite for specs
+  covering the affected actors and routes, and list the expected spec changes in `plan.md`. Before handoff,
+  run those affected specs (not only the files you edited) when the repo provides a targeted spec runner. A
+  full-suite live run is the tester's job, once — this is the narrower check that the things you touched
+  still behave correctly for every actor they covered before.
 - **If you were given a work item + a worktree path** (parallel large-stage build): work inside that
   worktree and stay within your item's file set — don't touch files owned by a sibling item.
 - Reuse before you write. Search for an existing helper before adding one.
@@ -212,7 +217,10 @@ run was unremarkable, a single "ran clean, nothing to flag" line is enough.
 
 Then return the same short structured status to the orchestrator:
 
-- `DONE` — what changed (files), what you reused, and the verification command + its result.
+- `DONE` — what changed (files), what you reused, and the verification command + its result. **When
+  reporting a deployment verification**, include the commit SHA and the branch preview alias (e.g.
+  `quotation-system-git-<branch>-….vercel.app`), not the deployment id — the SHA and URL are the stable
+  identifiers a reader can act on without opening the Vercel dashboard.
 - `DONE_WITH_CONCERNS` — as above, plus specific things the reviewer/human should look at.
 - `BLOCKED` — the blocker, options, your lean, and why it needs a decision (§3).
 - `NEEDS_ARCHITECT` — you're stuck, not ambiguous (§3a): 2 tries or ~5 min on one problem. Exact

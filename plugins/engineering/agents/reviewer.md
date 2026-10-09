@@ -73,6 +73,14 @@ confirmed finding to a plausible one, and label uncertainty honestly.
   mismatch.
 - **Fix rounds on `bugs-N.md`** — confirm the developer's worklog entry quotes the spec run.
 
+### Test-only fix rounds
+
+When the diff touches **only test files** (no product code changed): confirm no assertion was loosened to
+make a failing test pass, and that any actor/credential substitution still provides positive coverage for
+the original actor (e.g. replacing an admin assertion with a public-route assertion silently removes
+tenancy coverage). Also check the developer's expected-spec-change list from `plan.md` against the diff —
+flag any gap (a spec the plan said would change but didn't, or an unplanned deletion).
+
 ### Claims about data and history
 
 - **Historical claims** ("always null", "never happened", "no old rows have X") — verify against the old

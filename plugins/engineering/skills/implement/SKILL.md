@@ -130,6 +130,11 @@ and — at the top — anything that reads as a **new decision or a deviation** 
 **large + splittable** tier, also ask it to propose the **work-item breakdown** (independent items, each with
 a disjoint file set + order) in the plan. The developer appends its own thin entry to `worklog.md`.
 
+**For changes to a data-access or permission layer**, explicitly instruct the developer to: grep the repo's
+test suite for specs covering the affected actors and routes, include the expected spec changes in `plan.md`,
+and run those affected specs (not only the files it edited) before handoff when the repo provides a targeted
+spec runner.
+
 ## Step 3 — GATE A: deviation check (human)
 
 Read `plan.md` (optionally have **`engineering:architect`** verify it against the approved design — model:

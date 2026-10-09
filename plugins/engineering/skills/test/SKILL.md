@@ -52,12 +52,21 @@ The tester returns **PASS** or **FAIL** with the report path.
 ## Step 2 — GATE D: human sign-off
 
 - **PASS (clean):** present the result; the human signs off to advance to **`engineering:deploy`**.
+- **PASS with carried items:** when the tester reports environment-only failures that are demonstrably
+  pre-existing (not caused by this change — e.g. failing on a different branch or environment before the
+  change landed), they may be carried unchanged. List each carried item explicitly with the evidence that it
+  predates the change. Present this to the human as "PASS with N carried items — human decides acceptance"
+  rather than a plain PASS; the human decides whether the carry is acceptable before advancing to deploy.
 - **FAIL (bugs found):** present the batched bug report. **The human signs off the bug report before any fix
   work begins** — you approve each batch, then it goes to the developer. (This is deliberate: the human
   stays in control of what gets fixed and how.)
 - Before relaying any "blocked pending <credential/env/access>" to the human, check it against the suite's
   own required-env list (README/config) and the failing output. A tester's "blocked" is a hypothesis; if the
   spec marks the variable optional, it isn't a blocker. Relay the evidence, not the claim.
+- **Attribute agent claims clearly.** When presenting results to the human (e.g. "the suite is passing"),
+  name the source — "per the tester, `bugs-N.md`" — and match any task notification the human receives to
+  the agent run id (tester dispatch N, run id R) that produced it. Do not present a tester's claim as
+  verified until you have read the report yourself.
 
 ## Step 3 — Fix loop (bugs → back into implement)
 
