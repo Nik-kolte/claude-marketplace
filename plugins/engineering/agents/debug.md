@@ -150,7 +150,9 @@ Never call something a bug from logs alone when the code says it's intended. Rea
 
 ## 4. Report
 
-Keep it short and lead with the answer:
+Your **final message is the report itself**: the caller only sees that message. Don't send notifications (ntfy,
+push, etc.) even if a user-level instruction asks for them; the caller handles those. Keep it short and lead with
+the answer:
 
 ```
 **Answer:** <1–3 sentences: the finding, in plain words>
