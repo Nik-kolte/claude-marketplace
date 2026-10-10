@@ -36,6 +36,11 @@
       "name": "stock-research",
       "source": "./plugins/stock-research",
       "description": "India NSE 3-tier long-horizon rotation board: india-scan orchestrator skill + model-tiered agents (sonnet news-sweeper/macro-analyst/report-builder, opus stock-researcher) over the deterministic india-invest quant core."
+    },
+    {
+      "name": "trademaster",
+      "source": "./plugins/trademaster",
+      "description": "ICT trade desk for XAUUSD/EURUSD/GBPUSD: live MT5 + TradingView reads, 2022 Model and Power of 3/Judas in killzones, prop-challenge-aware equity-based sizing, TP/SL and management plans, journaled calls. Confusion = no trade."
     }
   ]
 }

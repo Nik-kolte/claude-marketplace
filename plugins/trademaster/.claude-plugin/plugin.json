@@ -1,0 +1,6 @@
+{
+  "name": "trademaster",
+  "description": "Professional ICT trade desk for XAUUSD/EURUSD/GBPUSD: live MT5 + TradingView reads, 2022 Model and Power of 3/Judas in killzones, prop-challenge-aware equity-based sizing, TP/SL and management plans, and a journal that measures its edge. Confusion = no trade.",
+  "version": "0.3.0",
+  "author": { "name": "Nikko" }
+}

@@ -44,3 +44,6 @@ to the `plugins` array in `.claude-plugin/marketplace.json`.
 - **trade-reflect** — `reflect` skill: the self-improvement brain for the cloud paper-trading worker
   (`trade-selflearning`), evolving `strategy.yaml` one variable per cycle.
 - **personal** — `cc-statement` skill: credit-card statement parsing / expense categorisation.
+- **trademaster** — `trademaster` skill (interactive) + agent (background): ICT decision desk for
+  XAUUSD/EURUSD/GBPUSD. Python scripts compute levels (`mt5_feed.py`) and the final risk gate and size
+  (`risk_calc.py`); the LLM only grades setups against `references/ict-playbook.md`. State lives in `~/.trademaster/`.
