@@ -62,8 +62,10 @@ that carry context between spawns:
 Outside the stage flow, any time:
 
 - **`engineering:debug`** — ask the logs ("what failed today?", "what did `<user>` hit yesterday?", "staging vs.
-  prod health"). Needs an `axiom-debug.md` profile in the repo (datasets, token vars, test-traffic filter, time
-  zone) and query-only tokens; the helper is `scripts/axiom-query.mjs` (Node, no dependencies).
+  prod health"). Needs an `axiom-debug.md` profile in the repo (datasets, test-traffic filter, time zone) and the
+  Axiom MCP registered as `axiom` (`claude mcp add --scope user --transport http axiom https://mcp.axiom.co/mcp`,
+  then `/mcp` to sign in). The agent gets only the MCP's read tools. Fallback for unattended runs: query-only
+  tokens and `scripts/axiom-query.mjs` (Node, no dependencies).
 
 ## Branching (never touch `master`/`main` directly)
 
