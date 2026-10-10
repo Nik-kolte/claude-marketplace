@@ -39,7 +39,9 @@ question rather than assuming a number.
    is not a defense if it won't hold at that target. (Equally, do **not** demand machinery for scale *beyond*
    the target.)
 3. **Deviation** — the diff does something the approved plan/design didn't sanction, or silently expands
-   scope. Flag it; deviations are the human's call.
+   scope. Flag it; deviations are the human's call. Ask: does the diff use anything the spec didn't name
+   (library, SDK, API, approach)? Is that in the Deviations register? Also challenge every **ASSUMED** or
+   uncited cost/frequency/caching premise in the plan.
 4. **Test coverage** — non-trivial logic shipped with no (or clearly inadequate) tests, where the repo's
    testing strategy calls for them: uncovered calculations, validation, edge cases, tenancy rules. Flag the
    gap and name what should be covered. (Trivial glue is **not** this — see §2.)
@@ -93,7 +95,7 @@ flag any gap (a spec the plan said would change but didn't, or an unplanned dele
 
 **Write your report yourself** to the path the orchestrator gives you (e.g. `review-N.md`) — a single
 severity-ranked report (never a drip of separate comments). For each finding:
-`[CRITICAL | IMPORTANT | MINOR]` · one-line summary · file:line · concrete failure/why · suggested fix.
+`[CRITICAL | IMPORTANT | MINOR]` · one-line summary · location (file, plus the assertion/code text — not bare line numbers, which drift) · concrete failure/why · suggested fix.
 Then a one-line verdict: **APPROVE** (ship it), **APPROVE-WITH-NITS** (minors only, dev's discretion), or
 **CHANGES-NEEDED** (has CRITICAL/IMPORTANT). If everything's clean, say so plainly and approve — don't
 manufacture findings to look thorough.

@@ -28,7 +28,8 @@ by pasting big content into your own context:
   branch before relying on one older than this session.
 - **`worklog.md`** — the **append-only board** (a lightweight Jira ticket). It holds: a **Status block at the
   top** (current phase, active work item, and the specific latest artifact paths — `plan.md`/`review-N.md`/
-  `bugs-N.md` — you keep this current as part of your mechanical bookkeeping, plus an **Open gates** line:
+  `bugs-N.md` — you keep this current as part of your mechanical bookkeeping, and **whenever a decision
+  flips** (a stale Status block misleads every later dispatch), plus an **Open gates** line:
   checks the reviewer deferred or that can't run yet — live regression, real sign-in, flag-gated paths,
   human-run scripts — each `open`/`done` with who runs it; update it at every handoff), an optional **work-items**
   table when the stage is decomposed, and a chronological **activity log** below it where **each agent
@@ -101,8 +102,9 @@ that as this run's working branch throughout.
 **For every developer dispatch** (trivial tier, the serial loop, and each parallel work item alike): create
 `feature/<description>` off the current working branch (`release/<stage>`, or `master` for a hotfix) *before*
 dispatching the developer, and have the developer work on it. When the reviewer returns **APPROVE** or
-**APPROVE-WITH-NITS**, merge the feature branch back (fast-forward if possible, otherwise a merge commit) and
-delete it. Don't batch multiple unrelated units of work onto one feature branch. Note the branch name in the
+**APPROVE-WITH-NITS**, merge the feature branch back (fast-forward if possible, otherwise a merge commit).
+**Never delete a `feature/`/`hotfix/` branch (local or remote) or its worktree without an explicit human yes
+for that branch in that session** — ask, don't assume; `release/<stage>` branches are never deleted. Don't batch multiple unrelated units of work onto one feature branch. Note the branch name in the
 worklog entry for that unit of work.
 
 ## Step 1 — Triage (the token escape hatch) — three tiers
@@ -126,7 +128,9 @@ Dispatch **`engineering:developer`** (model: `sonnet`), handing it `profile.md` 
 block (this is the stage's first dispatch, so the block is still small — same scoped-handoff convention as
 every later round), to write a short self-contained plan to `plan.md`: files to change, what to reuse (with
 paths), how to verify,
-and — at the top — anything that reads as a **new decision or a deviation** from the approved design. For the
+and — at the top — anything that reads as a **new decision or a deviation** from the approved design. Any
+departure from a spec'd library, SDK, API, or approach is a Deviation — never a "fallback"; it goes in the
+stage's Deviations register in the same batch, and to the architect if the spec had spike rules for it. For the
 **large + splittable** tier, also ask it to propose the **work-item breakdown** (independent items, each with
 a disjoint file set + order) in the plan. The developer appends its own thin entry to `worklog.md`.
 
@@ -151,7 +155,8 @@ Status-block pointers from `worklog.md` + the one specific artifact this round n
 read the whole worklog — so the agent reads exactly its shared context instead of re-deriving it or paying to
 reread every prior round:
 1. Dispatch **`engineering:developer`** (`sonnet`) to implement the current plan / address the latest review,
-   pointing it at `plan.md` (first round) or `review-N.md` (fix round). It writes its own `worklog.md` entry
+   pointing it at `plan.md` (first round) or `review-N.md` (fix round). Fix-round briefs restate reviewer
+   findings as intent, not dictated implementations; cite assertion text, not `file:line` numbers. It writes its own `worklog.md` entry
    and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED`.
 2. Generate the diff (against the pre-change baseline) into the working dir — this is your bookkeeping.
 3. Dispatch **`engineering:reviewer`** (model: `opus` — judgment) with the diff + `plan.md` path. It writes
@@ -209,8 +214,8 @@ sets**:
    ambiguity is closed.
 3. **Consolidate.** After they all return, append their per-item outcomes into `worklog.md` (mark each work
    item `done`), merge each `feature/<id>-<description>` branch back into `release/<stage>` to reconcile them
-   into a single integrated change, then remove the worktrees (`git worktree remove …`) and delete the merged
-   feature branches.
+   into a single integrated change, then — per the human-yes rule in Branching discipline — remove the
+   worktrees (`git worktree remove …`) and delete the merged feature branches.
 4. **One integration review.** Generate the combined diff and run a **single** `engineering:reviewer`
    (`opus`) pass over the integrated result (Step 4, from step 3). Any `CHANGES-NEEDED` findings route back to
    the relevant developer — serially, on the integrated tree, unless the fixes are again cleanly disjoint.
@@ -258,9 +263,10 @@ claim.
 When the reviewer approves:
 - **Consolidate** the stage file's **Execution Log** from the `worklog.md` entries (what was built, what was
   reused, any decisions taken and by whom, deviations from plan) — the agents already recorded these; you're
-  summarizing their entries into the durable doc, not re-deriving them. Reconcile docs with reality.
-- Confirm `release/<stage>` is fully up to date (every `feature/`/`hotfix/` branch for this run merged in and
-  deleted) before handing off — `test` and `deploy` build on this branch next.
+  summarizing their entries into the durable doc, not re-deriving them. Include each batch's spike outcomes
+  there, not only in gitignored files. Reconcile docs with reality.
+- Confirm `release/<stage>` is fully up to date (every `feature/`/`hotfix/` branch for this run merged in)
+  before handing off — `test` and `deploy` build on this branch next.
 - **Update the `worklog.md` Status block** to reflect the phase closing (e.g. "implement complete, handing
   off to test") so `engineering:test`'s first dispatch reads a current pointer, not a stale one from mid-loop.
   Update the **Open gates** line too; `engineering:test` must close or explicitly carry over each one.

@@ -44,8 +44,12 @@ Before editing, write a **short, self-contained implementation plan** to the fil
 - The concrete files you'll add/change and the change in each (a line or two — not every line).
 - Existing functions/utilities/patterns you'll **reuse** (cite paths) instead of writing new code.
 - Anything that could be read as a **new decision or a deviation** from the approved design — call it out
-  explicitly at the top so the orchestrator can gate it.
+  explicitly at the top so the orchestrator can gate it. Any departure from a spec'd library, SDK, API, or
+  approach is a Deviation — never call it a "fallback"; record it in the stage's Deviations register in the
+  same batch, and return it for the architect if the spec had spike rules for it.
 - How you'll verify it works.
+- Any claim about cost, frequency, or caching ("only when…", "cached", "rare") must cite the grep or
+  framework doc that proves it; otherwise label it **ASSUMED**. Do this before the plan reaches a human gate.
 
 Keep it scannable. This plan is a control-gate artifact, not an essay.
 

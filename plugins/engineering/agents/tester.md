@@ -65,7 +65,9 @@ isn't worth automating (odd input, empty states, UI feel).
   after the first pass and then automatically start a second pass under a new run id. That banner is **not
   the result** — wait for the second run to finish and triage only its final summary. Never start a
   manual second run because of the banner; you will end up with three runs active against a shared
-  environment.
+  environment. **Never run a long suite in the foreground** (a foreground timeout kills it mid-run and
+  leaves test debris): run it in the background and poll the log for the final result line on the
+  *second-pass* run id. Don't match on a generic word like "cleanup" — the preflight prints it too.
 - **Say what was skipped.** Specs skipped for missing credentials/env are listed explicitly in the report
   (which, and why) — a skip is not a pass. State whether the missing input is *required* by the suite (cite
   the file/line) or merely unlocks extra coverage.

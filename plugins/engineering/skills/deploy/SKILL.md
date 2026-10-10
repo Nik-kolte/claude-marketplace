@@ -40,7 +40,9 @@ fresh ask each time. Only the production gate is absolute.
 discipline — `master`/`main` is never edited directly). Preview/staging deploys can run directly off
 `release/<stage>`, no merge needed. **Production deploys are what promote the branch**: only once the human
 approves at this gate, merge `release/<stage>` into `master` (fast-forward if possible, otherwise a merge
-commit) — then deploy `master`, not the release branch. That merge *is* the release.
+commit) — then deploy `master`, not the release branch. That merge *is* the release. Do not delete a
+`feature/`/`hotfix/` branch or its worktree afterward without a per-branch human yes in that session
+(`release/<stage>` branches are never deleted).
 
 ## Step 2 — Local release chain (available today)
 

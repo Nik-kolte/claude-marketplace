@@ -72,6 +72,17 @@ Once approved, update the repo's docs to reflect the decision **before implement
   holds prod credentials (agents may be unable to — then the human runs scripts from a runbook), ordering
   vs. the code deploy, backup/rollback, endpoint guard, and read-only recon first. Scripts over ~100 rows
   must emit progress output and be memoized/resumable.
+- **Human-run steps (runbooks) are pre-flight.** Give any runbook a **needed-by batch** column (earliest
+  batch or spike that needs each step) and request each step before that batch starts, not at the stall.
+  A step describing third-party UI must be checked against the real screen or marked "unverified". Name a
+  token handoff path that avoids chat (the human writes it into a gitignored env file and says "done").
+- **Flags.** "Is any changed UI/behaviour behind a flag that is off on Preview? If yes, enable it on Preview
+  or record the untestable gap up front."
+- **Mutation guard.** "Does this stage add an unauthenticated or new-prefix POST route? If so it needs an
+  entry in the regression fixtures' mutation guard / allow-list, plus a unit pin."
+- **Briefs and spikes.** Cite assertion text, not `file:line`. State the allowed spike-diagnostic mechanism
+  up front (e.g. labelled spike-diag commits that are reverted). For redaction designs, cross-check
+  existing error paths and string error carriers (e.g. a `result.message` string) before locking.
 - **Cheapest faithful implementation.** For any batch whose source of truth is a signed-off static artifact
   (HTML mockup, exported design), ask the human: "can this ship as-is rather than be re-implemented as
   components?" Record the answer as a locked decision. Note any mockup behaviour coupled across regions
