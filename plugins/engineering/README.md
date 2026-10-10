@@ -47,6 +47,7 @@ that carry context between spawns:
 | **reviewer** | One batched, severity-ranked review; correctness + test coverage + real simplifications | Gold-plates / demands perfection |
 | **tester** | Runs the real app; authors the automated integration/e2e suite; finds all bugs in one pass; one bug report | Trickles findings one at a time |
 | **devops** | Local build/migrate/health chain; cloud as a marked TBD | Fakes a deploy to infra that doesn't exist |
+| **debug** | Answers questions from the Axiom logs (failures, one user, one request, health, a feature, a deploy check) with a query-only token | Changes code, data, settings or tokens |
 
 ## Skills (`skills/`) — invoke in order across a stage
 
@@ -57,6 +58,12 @@ that carry context between spawns:
    advance).
 4. **`engineering:deploy`** — devops ships it. → GATE E (you sign off before deploy), then regression.
 5. **`engineering:regression`** — the standing smoke checklist; grows one condition per stage.
+
+Outside the stage flow, any time:
+
+- **`engineering:debug`** — ask the logs ("what failed today?", "what did `<user>` hit yesterday?", "staging vs.
+  prod health"). Needs an `axiom-debug.md` profile in the repo (datasets, token vars, test-traffic filter, time
+  zone) and query-only tokens; the helper is `scripts/axiom-query.mjs` (Node, no dependencies).
 
 ## Branching (never touch `master`/`main` directly)
 
