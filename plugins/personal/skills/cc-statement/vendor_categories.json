@@ -155,6 +155,93 @@
       "patterns": ["eliteassist"],
       "category": 6,
       "notes": "Credit card concierge/service charge, usually ₹2"
+    },
+    "Airbnb": {
+      "patterns": ["airbnb"],
+      "category": 3,
+      "notes": "Short-term stay booking. RAZ*Airbnb on statement"
+    },
+    "Ibibo Group": {
+      "patterns": ["ibibo group"],
+      "category": 3,
+      "notes": "MakeMyTrip/Goibibo travel booking, Haryana"
+    },
+    "IndiGo Airline": {
+      "patterns": ["indigo airline"],
+      "category": 3
+    },
+    "Urban Company": {
+      "patterns": ["urbanclap technologies"],
+      "category": 6,
+      "notes": "Home/personal services marketplace (electrician, salon, cleaning). User classifies as Other rather than Activities/Food"
+    },
+    "Vijay Sales": {
+      "patterns": ["vijay sales"],
+      "category": 5,
+      "notes": "Electronics retail chain"
+    },
+    "The Beer Cafe": {
+      "patterns": ["the beer cafe", "tbc01"],
+      "category": 2
+    },
+    "Singla Liquor": {
+      "patterns": ["singla liquor"],
+      "category": 2,
+      "notes": "Liquor store, Gurgaon"
+    },
+    "Sai Samartha Petroleum": {
+      "patterns": ["sai samartha petroleum"],
+      "category": 3,
+      "notes": "Fuel station, Pimpri. User classifies fuel as travel expense"
+    },
+    "BESCOM": {
+      "patterns": ["bescom"],
+      "category": 1,
+      "notes": "Bangalore electricity board utility bill"
+    },
+    "Chaphalkar Brothers": {
+      "patterns": ["chaphalkar brothers"],
+      "category": 2,
+      "notes": "Well-known Pune sweets/snacks shop"
+    },
+    "RAZ*Uengage": {
+      "patterns": ["uengage"],
+      "category": 8,
+      "notes": "Restaurant online-ordering SaaS platform fee"
+    },
+    "Kaka Halwai Sweets": {
+      "patterns": ["kaka halwai"],
+      "category": 2,
+      "notes": "Sweets shop, Pune"
+    },
+    "M S Beechams Press": {
+      "patterns": ["beechams press"],
+      "category": 5,
+      "notes": "Central Delhi, purpose unclear, user classifies as Shopping"
+    },
+    "Bundl Technologies": {
+      "patterns": ["bundl technologies"],
+      "category": 2,
+      "notes": "Swiggy's legal parent entity — merge into Swiggy"
+    },
+    "Google Cloud": {
+      "patterns": ["google cloud"],
+      "category": 8
+    },
+    "Foreign Currency Transaction Fee": {
+      "patterns": ["foreign currency transaction fee"],
+      "category": 8,
+      "notes": "Card FX fee, typically tied to foreign-billed subscriptions like Anthropic Claude"
+    },
+    "GST": {
+      "patterns": ["gst"],
+      "category": 6,
+      "notes": "Tax line, usually accompanying the Foreign Currency Transaction Fee"
+    },
+    "Divine Salon": {
+      "patterns": ["divine salon"],
+      "category": 6,
+      "notes": "Salon, Pune"
     }
   }
 }
