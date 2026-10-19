@@ -42,6 +42,14 @@ The architect proposes the smallest valuable next increment, surfaces the open q
 and weighs cost/complexity/solo-dev timeline. Relay its questions to the human and carry answers back.
 Iterate architect ↔ human until the target is clear.
 
+**Multi-item intake (feedback lists, bug batches).** Don't present every item at once — humans lose the
+thread. Interview **one item at a time** in a fixed shape: **Problem → Impact → Proposed solution → T-shirt
+size → the human's call**, and lock each item before moving on. For any item that is a *correctness* problem
+(wrong data, wrong numbers, a blocked flow), have an agent find the **root cause** in code/docs before
+proposing a fix — a UX fix on top of an unexplained correctness bug usually treats the symptom. Treat
+interaction rules as provisional until the human has seen them in a mockup; expect the mockup rounds to
+change them.
+
 **Scope-too-big check:** if the architect judges the stage too large to build/review/test efficiently in one
 cycle, have it propose a split (independent pieces + order). Bring the split options to the human.
 
@@ -56,8 +64,8 @@ everything downstream is measured against — take it seriously.
 Once approved, update the repo's docs to reflect the decision **before implementation**:
 - Write/append the stage file in the tracker (or the default location from Step 0): the target, scope,
   in/out-of-scope, open decisions resolved, and an empty **Execution Log** for the build to fill in. The
-  architect has no Edit tool by design: it writes *new* files and returns paste-ready text for edits to
-  existing docs — dispatch a developer (`haiku`) to apply those verbatim and report the diff.
+  architect writes and edits docs directly (Write/Edit, docs only) but has no shell — after it returns its
+  list of changed files, commit them (or dispatch a developer, `haiku`, to commit) per the repo's docs rules.
 - If the design itself changed or a spec was missing, update the relevant design doc too — never leave code
   intent uncaptured in docs.
 
