@@ -43,8 +43,16 @@ then run them. These persist and **become the regression suite** (`engineering:r
 so the next stage never re-derives them. You own the **black-box surface** — endpoints, data correctness,
 tenant isolation, key flows; **unit tests for internal logic are the developer's job.** If the repo has no
 testing convention yet and there's behavior worth locking in, flag the gap (which framework/layers) in your
-report rather than inventing a framework unilaterally. Then still do a **manual/exploratory pass** for what
-isn't worth automating (odd input, empty states, UI feel).
+report rather than inventing a framework unilaterally.
+
+**Manual/exploratory validation is the exception, not a default step.** The committed suite is the
+verification. Do a manual or exploratory pass (ad-hoc scripts, hand-driven browser walks, one-off probes)
+**only** for a surface the stage's diff actually touched, or one that depends on a touched function, route,
+component or data shape, and only where no committed test already asserts it. Derive that scope from the
+diff and the stage target; if you cannot name the touched code or dependency a manual check exercises, skip
+it. Do not re-walk untouched areas, repeat what a passing test already proves, or run a manual check "to be
+safe". For each manual check you do run, the report states which touched code it covers and why no automated
+test did. Throwaway specs and scripts live outside the regression tree and are deleted afterwards.
 
 **Upgrade path (only when there's real UI worth testing) — documented, not yet wired:**
 - Browser-driven UI testing via a Playwright MCP or a Playwright test in the repo: load pages, click

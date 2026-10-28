@@ -39,9 +39,15 @@ itself to a durable path in the working dir (e.g. `bugs-N.md`) plus a thin workl
 - **data integrity & tenancy isolation** (query the DB directly; confirm one tenant can't see another's
   data where applicable),
 - **codify those black-box checks as committed automated tests** (per the repo's testing strategy) so they
-  persist as the regression suite — plus a manual/exploratory pass for what isn't worth automating,
+  persist as the regression suite — plus a manual/exploratory pass **only for surfaces the diff touched
+  (or that depend on touched code) and no committed test covers** (never a blanket walk of untouched areas),
 - UI flows **only if** there's real UI worth testing (recommend the Playwright upgrade in the report when
   the product reaches that point — don't stand it up prematurely).
+
+Give it the stage's changed-file list (the diff against the base) and instruct it: **manual validation is
+scoped to that diff.** Skip manual or exploratory checks for anything the stage did not touch or depend on,
+and for anything a passing committed test already proves; every manual check it does run is justified in the
+report by the touched code it covers. Ad-hoc specs stay out of the regression tree.
 
 Instruct it too: **a suite that merely loads (`--list`) is not verified** — run one real probe through the
 shared helper first; split or fail-fast serial describe chains so one failure can't hide the rest; re-run
