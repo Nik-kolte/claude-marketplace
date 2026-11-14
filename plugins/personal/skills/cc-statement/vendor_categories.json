@@ -15,13 +15,14 @@
     "fuel cashback rebates",
     "cashback rebate",
     "opening balance",
-    "payment received"
+    "payment received",
+    "food plaza"
   ],
   "vendors": {
     "Zepto": {
       "patterns": ["zepto"],
       "category": 1,
-      "notes": "Grocery quick-commerce. All variants: ZEPTO MARKETPLACE PRIV, Zepto Marketplace Private, ZEPTONOW, PHP*Zepto"
+      "notes": "Grocery quick-commerce. All variants: ZEPTO MARKETPLACE PRIV, Zepto Marketplace Private, ZEPTONOW, PHP*Zepto, ZEPTO909NPLCYBS (appears as credit/refund)"
     },
     "Blinkit": {
       "patterns": ["blinkit", "blink commerce"],
@@ -76,7 +77,7 @@
       "notes": "Dining, Bangalore"
     },
     "Air India": {
-      "patterns": ["air india"],
+      "patterns": ["air india", "airindiaweb"],
       "category": 3,
       "notes": "BIL*AIR INDIA LTD on statement"
     },
@@ -167,7 +168,7 @@
       "notes": "MakeMyTrip/Goibibo travel booking, Haryana"
     },
     "IndiGo Airline": {
-      "patterns": ["indigo airline"],
+      "patterns": ["indigo airline", "indigo", "interglobe aviation"],
       "category": 3
     },
     "Urban Company": {
@@ -195,7 +196,7 @@
       "notes": "Fuel station, Pimpri. User classifies fuel as travel expense"
     },
     "BESCOM": {
-      "patterns": ["bescom"],
+      "patterns": ["bescom", "bescl"],
       "category": 1,
       "notes": "Bangalore electricity board utility bill"
     },
@@ -242,6 +243,141 @@
       "patterns": ["divine salon"],
       "category": 6,
       "notes": "Salon, Pune"
+    },
+    "House of Styling": {
+      "patterns": ["house of styling"],
+      "category": 6,
+      "notes": "Styling/grooming service, New Delhi (RAZ*). User classifies as Other"
+    },
+    "Auto Service (Pune)": {
+      "patterns": ["adarsh automobiles", "shubhika auto"],
+      "category": 3,
+      "notes": "Pune auto service/garage, usually ₹2,020. User classifies as Travel"
+    },
+    "Bansal Tech Profes": {
+      "patterns": ["bansal tech"],
+      "category": 1,
+      "notes": "Bhopal tech/professional merchant (RAZ*). User says it is daily food"
+    },
+    "Luzo": {
+      "patterns": ["luzo"],
+      "category": 6,
+      "notes": "Mumbai merchant. User classifies as Other"
+    },
+    "Cococart": {
+      "patterns": ["cococart"],
+      "category": 5,
+      "notes": "Kolkata online store. User classifies as Shopping"
+    },
+    "Razorpay Payments": {
+      "patterns": ["mw razorpay"],
+      "category": 6,
+      "notes": "Small payment-gateway refund (₹35 CR). User classifies as Other"
+    },
+    "Paytm Travel": {
+      "patterns": ["paytm travel"],
+      "category": 3,
+      "notes": "Travel booking, Noida; debit and credit often net out partially"
+    },
+    "MakeMyTrip": {
+      "patterns": ["makemytrip"],
+      "category": 3,
+      "notes": "PHP*MAKEMYTRIP INDIA PR, Bangalore booking"
+    },
+    "Eat Good Technologies": {
+      "patterns": ["eat good technologies"],
+      "category": 2,
+      "notes": "Food ordering/restaurant tech, Bangalore"
+    },
+    "PAX Innovation ICT": {
+      "patterns": ["pax innovation"],
+      "category": 6,
+      "notes": "Tiny ₹2 card/verification charge, Bangalore. User classifies as Other"
+    },
+    "Razorpay Payments (Thane)": {
+      "patterns": ["razorpay payments"],
+      "category": 2,
+      "notes": "Refund credit for a food order, Thane. User classifies as Dining"
+    },
+    "Down Town": {
+      "patterns": ["down town"],
+      "category": 2,
+      "notes": "Restaurant/bar, Gurgaon"
+    },
+    "Coffee Day": {
+      "patterns": ["coffee day"],
+      "category": 2,
+      "notes": "Cafe chain, Gurgaon"
+    },
+    "Reliance Trends": {
+      "patterns": ["reliance trends"],
+      "category": 5,
+      "notes": "Clothing retail, Gurgaon"
+    },
+    "Oval Bean Hospitality": {
+      "patterns": ["oval bean"],
+      "category": 2,
+      "notes": "Cafe/restaurant, South Delhi"
+    },
+    "Hungerbox": {
+      "patterns": ["hungerbox"],
+      "category": 1,
+      "notes": "Office canteen food ordering, Bangalore. User classifies as daily food"
+    },
+    "Zudio": {
+      "patterns": ["zudio"],
+      "category": 5,
+      "notes": "Trent clothing retail, Delhi"
+    },
+    "Aroon Food Services": {
+      "patterns": ["aroon food"],
+      "category": 2,
+      "notes": "Food outlet, New Delhi"
+    },
+    "Shree Vinayak Agencies": {
+      "patterns": ["shree vinayak"],
+      "category": 6,
+      "notes": "Small misc payment (~₹30), New Delhi"
+    },
+    "Hotel Asansol International": {
+      "patterns": ["hotel asansol"],
+      "category": 2,
+      "notes": "Hotel, Asansol. User classifies as Dining (not stay)"
+    },
+    "Kenangan Coffee": {
+      "patterns": ["kenangan coffee"],
+      "category": 2,
+      "notes": "Coffee chain, Delhi"
+    },
+    "Jumbo Speciality Food": {
+      "patterns": ["jumbo speciality"],
+      "category": 2,
+      "notes": "Food merchant, Delhi (₹2,913). User classifies as Dining"
+    },
+    "House Of Brides": {
+      "patterns": ["house of brides"],
+      "category": 5,
+      "notes": "Bridal wear/retail purchase (₹14,000). User classifies as Shopping"
+    },
+    "Mohd Naushad": {
+      "patterns": ["naushad"],
+      "category": 5,
+      "notes": "Individual/small merchant payment (₹17,850), appears alongside House Of Brides. User classifies as Shopping"
+    },
+    "Popeyes": {
+      "patterns": ["popeyes"],
+      "category": 2,
+      "notes": "Fried chicken fast-food chain"
+    },
+    "Lala Shivnath Rasgulla": {
+      "patterns": ["lala shivnath"],
+      "category": 2,
+      "notes": "Sweets/snacks shop (statement text truncated: LALA SHIVNATH RA...)"
+    },
+    "Food Plaza (Asansol)": {
+      "patterns": ["food plaza"],
+      "category": 6,
+      "notes": "₹30,000 Asansol, EMI-convertible. User said ignore/exclude this expense"
     }
   }
 }
