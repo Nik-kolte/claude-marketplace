@@ -50,6 +50,15 @@ proposing a fix — a UX fix on top of an unexplained correctness bug usually tr
 interaction rules as provisional until the human has seen them in a mockup; expect the mockup rounds to
 change them.
 
+**All mockups come from `engineering:ui-designer`.** Whenever an item has a visual shape, or the architect
+returns a mockup request, dispatch **`engineering:ui-designer`** (model: `opus`) with a brief (page/route,
+what changes, locked decisions, open parts, states), `profile.md` (seed it early if a mockup is needed
+before Step 3) and the `retro.md` path. Independent mockups can be dispatched in parallel. The architect and
+you never draw mockups yourselves. Relay the designer's return to the human as: the link/screenshots, the
+options with its recommendation (at least three for anything not locked), its open questions, and its
+**Warnings** and **Theme deviations** verbatim. Each section's sign-off (and chosen option) becomes a
+locked decision in the stage file.
+
 **Scope-too-big check:** if the architect judges the stage too large to build/review/test efficiently in one
 cycle, have it propose a split (independent pieces + order). Bring the split options to the human.
 
@@ -95,9 +104,10 @@ Once approved, update the repo's docs to reflect the decision **before implement
   (HTML mockup, exported design), ask the human: "can this ship as-is rather than be re-implemented as
   components?" Record the answer as a locked decision. Note any mockup behaviour coupled across regions
   (e.g. focus state driving a scene) so the batch list anticipates a client wrapper.
-- **Mockup sign-off.** For any shipped-as-is or pixel-matched mockup, the human sees desktop, a ~390px
-  screenshot of each page, and the states that change on interaction — shipped verbatim means bugs ship
-  verbatim. Keep mockups lean (no inlined base64 fonts, no multi-KB lines).
+- **Mockup sign-off.** Every mockup (by `engineering:ui-designer`) is shown at the three laptop sizes
+  (13" 1280×800, 15.6" 1536×864, 24" 1920×1080), a 390px phone check, and the states that change on
+  interaction. Shipped-as-is or pixel-matched means bugs ship verbatim, so the bar is the same. Any UI
+  batch whose mockup isn't signed off yet is listed as a pre-flight item with its needed-by batch.
 - **Source-of-truth artifacts are committed before the batch that copies them.** If an acceptance
   criterion says "byte-identical to X", X must be a committed blob (path + commit sha in the task); make
   "commit the signed-off artifacts" Batch 0's last step.

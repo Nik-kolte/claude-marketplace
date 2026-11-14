@@ -80,6 +80,15 @@ agent (developer, `haiku`/`sonnet`) to produce it — **you don't do discovery y
 target** from the tracker (the worklog links it). Everything you build is measured against this. If there's
 no approved stage, stop and point the human to `engineering:stage-prep`.
 
+**Mockups first, all at once.** List every batch with a visual shape whose mockup isn't signed off yet.
+Dispatch **`engineering:ui-designer`** (model: `opus`) for all of them now, in parallel where independent,
+each with a brief (page/route, what changes, locked decisions, open parts, states) plus `profile.md`, the
+Status block and the `retro.md` path. Put every result in front of the human in one message at the start
+of the run (links/screenshots, options with the recommendation, open questions, Warnings and Theme
+deviations verbatim), and notify them, so their sign-off runs in parallel with the non-UI batches. Record
+each sign-off and chosen option as a locked decision. Nobody else draws mockups: not you, the architect or
+the developer.
+
 When a human instruction names a *category* ("the backfills", "rework the CTA") and the docs suggest more
 than one concrete candidate, don't infer — ask one question listing the candidates before dispatching any
 build.
@@ -157,7 +166,9 @@ reread every prior round:
 1. Dispatch **`engineering:developer`** (`sonnet`) to implement the current plan / address the latest review,
    pointing it at `plan.md` (first round) or `review-N.md` (fix round). Fix-round briefs restate reviewer
    findings as intent, not dictated implementations; cite assertion text, not `file:line` numbers. It writes its own `worklog.md` entry
-   and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED`.
+   and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_MOCKUP`. On `NEEDS_MOCKUP`, dispatch
+   `engineering:ui-designer` with the developer's brief, get the human's sign-off, then resume the
+   developer on the approved sections (other batches keep moving meanwhile).
 2. Generate the diff (against the pre-change baseline) into the working dir — this is your bookkeeping.
 3. Dispatch **`engineering:reviewer`** (model: `opus` — judgment) with the diff + `plan.md` path. It writes
    `review-N.md` and a worklog entry itself, and returns a verdict: **APPROVE** / **APPROVE-WITH-NITS** /
@@ -291,5 +302,5 @@ plugin files yourself** — that's a change to the SDLC machinery itself, the hu
 
 ## Model tiering (token discipline)
 
-Judgment → `opus` (architect, reviewer). Mechanical build → `sonnet` (developer). Trivial checks → `haiku`.
+Judgment → `opus` (architect, reviewer, ui-designer). Mechanical build → `sonnet` (developer). Trivial checks → `haiku`.
 Batch reviews into one report per pass; hand artifacts by path; never let the loop run uncapped.

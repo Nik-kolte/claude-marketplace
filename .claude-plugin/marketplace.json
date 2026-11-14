@@ -30,7 +30,7 @@
     {
       "name": "engineering",
       "source": "./plugins/engineering",
-      "description": "Token-aware, repo-agnostic software-development lifecycle for a solo dev: architect/developer/reviewer/tester/devops agents orchestrated by phase skills (stage-prep, implement, test, deploy, regression) with the human as a control gate."
+      "description": "Token-aware, repo-agnostic software-development lifecycle for a solo dev: architect/ui-designer/developer/reviewer/tester/devops agents orchestrated by phase skills (stage-prep, implement, test, deploy, regression) with the human as a control gate."
     },
     {
       "name": "stock-research",

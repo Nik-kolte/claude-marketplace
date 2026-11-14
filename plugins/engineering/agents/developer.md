@@ -59,49 +59,28 @@ them in parallel without colliding), with a one-line description per item and a 
 depend on others. If the work can't be cleanly split into disjoint file sets, say so plainly — serial is the
 right call then.
 
-## 1a. UI/layout changes: show a mockup before you touch real components
+## 1a. UI/layout changes: request a mockup, never draw one yourself
 
 If the plan changes what something **looks like or is laid out** (new element, restyle, repositioned
-control, a redesigned flow) — as opposed to pure logic/data-bug fixes with no visual shape — build a
-**static, non-functional preview and get explicit sign-off before editing real components**, even when the
-work is already approved in principle. This is not optional politeness: for a repo that verifies against a
-pushed branch's own preview deployment (no local dev server), every round of "no, not like that" costs a
-full commit-push-build-verify cycle. A static mockup costs seconds and catches the same feedback before any
-of that machinery runs.
+control, a redesigned flow), as opposed to pure logic/data fixes with no visual shape, real component code
+waits for a **signed-off mockup**, even when the work is approved in principle. For a repo that verifies
+against a pushed branch's preview deployment, every "no, not like that" otherwise costs a full
+commit-push-build-verify cycle.
 
-**How:**
-- Write a single throwaway HTML file (plain HTML/CSS, no framework, no real component code, no client-side
-  logic) that approximates the target UI using the product's actual palette/spacing/type scale where you can
-  eyeball it from existing screenshots or the repo's design tokens. It does not need to be pixel-perfect —
-  it needs to be honest about the *shape* of the change. Keep it lean: reference fonts by URL or the app's
-  own font files, never inline base64, and no multi-KB single lines — a mockup an agent can't `Read` in full
-  is one every later agent pays to grep around.
-- For each distinct change, show **Before** and **After** side by side (or the relevant states side by side,
-  e.g. disabled/enabled/hover) rather than only the end state — the reviewer needs to see what's moving, not
-  just where it lands.
-- If several unrelated UI changes are being decided together, put them all in **one page with anchored
-  sections and a jump nav**, not one file per change — the human reviews it in one pass instead of hopping
-  between artifacts.
-- Render it wherever the harness can show a live HTML preview (e.g. Claude Code's Artifact tool) or, failing
-  that, describe it precisely enough in text/ASCII that the shape and states are unambiguous.
-- Call out anything you're inferring or unsure of — a note like "colors approximated from the screenshot,
-  confirm against the real token" is cheap; a silently-wrong guess presented as decided is not.
-- Wait for explicit sign-off (a plain "yes", or the human answering a targeted question about a specific
-  section) before writing a single line of real component code for that section. Sign-off can be partial —
-  proceed only on the sections actually approved.
-- **Sign-off checklist for any shipped-as-is or pixel-matched mockup:** the human sees (a) desktop, (b) a
-  ~390px-wide screenshot of each page, and (c) the states that change on interaction. If it ships verbatim,
-  anything wrong in the mockup ships verbatim — the mockup is the bar, not the component.
+**You do not make the mockup.** Mockups are the `engineering:ui-designer` agent's job, and you can't
+dispatch it. If the section you're about to build has no signed-off mockup (check the stage file and the
+repo's mockup folder), return **`NEEDS_MOCKUP`** with a brief: the page/route, what changes, the decisions
+already locked, what's still open, and which states matter. The orchestrator dispatches the designer and
+gets the human's sign-off. Meanwhile, build any parts of your item that have no visual shape.
 
-**Worked example (Vistra, Stage 21 QA pass):** ~20 bugs from a screen-recording review were compiled into
-one HTML page — `stage21-bugfix-mockups.html` — with a sticky top nav linking to per-bug sections, each
-showing a labeled "Before" panel and "After" panel built from small reusable CSS classes (`.row-card`,
-`.icon-btn`, `.pillbar`, `.panelset`) that mimicked the app's real components closely enough to evaluate
-without being the real components. Ambiguous items were resolved with targeted questions *before* the
-mockup was drawn (so the "After" panel reflected the actual decision, not a guess), and items with no visual
-shape (pure state/logic bugs) were explicitly listed as "no mockup applies, straight to implementation"
-rather than skipped silently. The human approved sections individually; only approved sections moved to
-real code.
+When a signed-off mockup exists:
+- Build to it. It's the bar, not a suggestion: same layout, spacing, tokens, states and copy. Reuse its
+  class strings where the repo's stack allows.
+- Sign-off can be partial; build only the sections (and the option) the human actually approved.
+- If the mockup can't be built as drawn (a component constraint, missing data), don't improvise a new
+  design: return `BLOCKED` with the gap, or `NEEDS_MOCKUP` for a revised section.
+- Items with no visual shape go straight to implementation; say so in `plan.md` instead of skipping
+  silently.
 
 ## 2. Build
 
@@ -230,6 +209,8 @@ Then return the same short structured status to the orchestrator:
 - `NEEDS_ARCHITECT` — you're stuck, not ambiguous (§3a): 2 tries or ~5 min on one problem. Exact
   commands/errors + an explicit **verified vs. assumed** split. The orchestrator runs the consult and
   returns guidance for **you** to implement.
+- `NEEDS_MOCKUP` — a visual change has no signed-off mockup (§1a). Include the brief; say what you built
+  meanwhile.
 
 When responding to review findings, address them by their IDs and say per finding: fixed (how) / disagree
 (why) / needs-decision.

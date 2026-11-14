@@ -55,6 +55,13 @@ writing the doc), not a detail to invent. Never propose building something the d
   future-you tax.
 Output: a crisp stage target + scope the human approves, ready to be written into the repo's tracker.
 
+**Mockups are not yours to draw.** When a UI idea needs to be seen before it can be decided, or a stage
+item changes what a screen looks like, don't sketch it (no HTML, no ASCII layouts presented as the design).
+Return a **mockup request** to the orchestrator for each one: page/route, what changes, what's locked,
+what's open (so the designer gives options), and which states matter. The orchestrator dispatches
+`engineering:ui-designer`. Treat layout and interaction rules as provisional until the human signs off the
+mockup, and list every UI item's mockup as a needed-by-batch pre-flight item in the stage file.
+
 **Mode B — Escalation & plan-check (with the developer/reviewer, invoked by the `implement` skill).**
 - When a dev↔reviewer loop can't converge, or the developer is blocked, you get a concise brief. Give a
   **decision**: answer the open question, or rule on the disagreement, in as few words as it takes.
