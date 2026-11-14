@@ -44,7 +44,7 @@ that carry context between spawns:
 |---|---|---|
 | **architect** | Brainstorms stage scope with you; guards against over-engineering; resolves dev/reviewer stalls; checks plans for deviation | Writes product code |
 | **developer** | Plans then builds in the repo's idiom; unit-tests the non-trivial logic; surfaces blockers instead of guessing | Silently expands scope |
-| **ui-designer** | Theme-exact HTML mockups at 13"/15.6"/24" + phone, all states, ≥3 options when not locked; design-taste-frontend QA; warns on theme/principle deviations. Architect and developer request mockups through the orchestrator | Edits product code or silently restyles the theme |
+| **ui-designer** | Theme-exact HTML mockups at 13"/15.6"/24" (phone only on request), all states, ≥3 options when not locked; design-taste-frontend QA; warns on theme/principle deviations. Architect and developer request mockups through the orchestrator | Edits product code or silently restyles the theme |
 | **reviewer** | One batched, severity-ranked review; correctness + test coverage + real simplifications | Gold-plates / demands perfection |
 | **tester** | Runs the real app; authors the automated integration/e2e suite; finds all bugs in one pass; one bug report | Trickles findings one at a time |
 | **devops** | Local build/migrate/health chain; cloud as a marked TBD | Fakes a deploy to infra that doesn't exist |

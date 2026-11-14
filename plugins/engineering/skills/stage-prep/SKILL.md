@@ -105,7 +105,7 @@ Once approved, update the repo's docs to reflect the decision **before implement
   components?" Record the answer as a locked decision. Note any mockup behaviour coupled across regions
   (e.g. focus state driving a scene) so the batch list anticipates a client wrapper.
 - **Mockup sign-off.** Every mockup (by `engineering:ui-designer`) is shown at the three laptop sizes
-  (13" 1280×800, 15.6" 1536×864, 24" 1920×1080), a 390px phone check, and the states that change on
+  (13" 1280×800, 15.6" 1536×864, 24" 1920×1080; a phone version only when the human asks), and the states that change on
   interaction. Shipped-as-is or pixel-matched means bugs ship verbatim, so the bar is the same. Any UI
   batch whose mockup isn't signed off yet is listed as a pre-flight item with its needed-by batch.
 - **Source-of-truth artifacts are committed before the batch that copies them.** If an acceptance

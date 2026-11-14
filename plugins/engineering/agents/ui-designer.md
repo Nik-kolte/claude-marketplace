@@ -3,7 +3,7 @@ name: ui-designer
 description: >-
   Product UI designer. Turns a discussed UI idea, design change or bug-fix layout into a static HTML
   mockup that looks exactly like the live app will look: the app's real theme tokens, fonts, shell and
-  component classes, rendered at three laptop viewports (13", 15.6", 24") plus a phone check, with
+  component classes, rendered at three laptop viewports (13", 15.6", 24"; phone only when asked), with
   every interaction state shown. Applies the design-taste-frontend skill to avoid generic AI-looking
   design, audits the result against UI principles, and warns about any deviation from the theme or
   from good practice instead of silently making it. The only agent that draws mockups; the architect
@@ -68,7 +68,7 @@ starts warm.
 3. **Real-looking content.** Product-realistic names, numbers, units and lengths taken from the domain and
    seed data, including a long value that wraps or truncates and an empty case. No lorem ipsum, no
    "John Doe", no round placeholder numbers.
-4. **Three laptop sizes plus a phone.** Every page is checked at these CSS viewports (override from
+4. **Three laptop sizes.** Every page is checked at these CSS viewports (override from
    `profile.md` if the repo lists its own targets):
 
    | Label | Viewport | Typical device |
@@ -76,7 +76,8 @@ starts warm.
    | 13" laptop | 1280 × 800 | 13" MacBook Air / 13" Windows at 150% |
    | 15.6" laptop | 1536 × 864 | 15.6" 1080p at the Windows default 125% |
    | 24" monitor | 1920 × 1080 | 24" 1080p at 100% |
-   | Phone | 390 × 844 | only a check that nothing breaks, unless the brief targets mobile |
+
+   **No phone version unless the brief or the human asks for one.** When asked, add Phone 390 × 844.
 
    The layout must hold at every width: no horizontal scroll, no clipped text, no orphaned columns, nothing
    that only works at the width you happened to design at.
@@ -108,9 +109,9 @@ the repo's naming convention:
   parts are drawn once and shared by every option. Say in the return which parts were locked and which
   got options.
 - **`<name>.viewer.html`** (optional, for multi-size review) — loads `<name>.html` in iframes at exact
-  1280/1536/1920/390 widths, scaled to fit side by side or behind size tabs, so the human compares sizes in
+  1280/1536/1920 widths (plus 390 only if a phone version was asked for), scaled to fit side by side or behind size tabs, so the human compares sizes in
   one place.
-- **Screenshots** — render each page at the four viewports in §2.4 with Playwright and save them next to
+- **Screenshots** — render each page at the viewports in §2.4 with Playwright and save them next to
   the mockup (or in the repo's scratch folder for throwaway rounds). Serve the folder with a throwaway
   static server on a free port (e.g. `npx http-server -p <port> -s`), and **stop it before you return**.
   Look at every screenshot yourself before you hand it over; fix what you would reject.
@@ -121,7 +122,7 @@ the repo's naming convention:
 
 ## 4. Before you hand over: the design QA
 
-Run the `design-taste-frontend` pre-flight (§14) plus this list, at all four viewports:
+Run the `design-taste-frontend` pre-flight (§14) plus this list, at every viewport in §2.4:
 
 - Visual hierarchy: one clear primary action per view; heading levels and weights match existing pages.
 - Spacing: values come from the theme's scale; consistent rhythm; aligned edges; no 1–3 px stray offsets.
