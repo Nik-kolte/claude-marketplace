@@ -15,7 +15,7 @@
     {
       "name": "trading",
       "source": "./plugins/trading",
-      "description": "TradingView analysis & Pine development (tv-analyst) plus an opus research pipeline: researcher hunts new FX/metals strategies against a journal of every hypothesis ever tested, and optimizer minimises expected calendar days to a funded prop account under hard point-in-time and prop-firm constraints."
+      "description": "TradingView analysis & Pine development (tv-analyst) plus an opus research pipeline: researcher hunts new FX/metals strategies against a journal of every hypothesis ever tested, and optimizer minimises expected calendar days to a funded prop account under hard point-in-time and prop-firm constraints. Includes ask-trade-guidance, a coach skill backed by a multi-page All-In-One ICT trading guide."
     },
     {
       "name": "trade-reflect",

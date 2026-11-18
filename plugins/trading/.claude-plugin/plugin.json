@@ -1,7 +1,7 @@
 {
   "name": "trading",
-  "description": "Tooling for the consolidated trading repo. Ships tv-analyst (TradingView MCP: chart analysis, Pine development, backtest validation), researcher (opus: hunts new FX/metals strategies against a journal of every hypothesis ever tested, with cost and multiple-testing gates), and optimizer (opus: minimises expected calendar days to a funded prop account).",
-  "version": "0.5.0",
+  "description": "Tooling for the consolidated trading repo. Ships tv-analyst (TradingView MCP: chart analysis, Pine development, backtest validation), researcher (opus: hunts new FX/metals strategies against a journal of every hypothesis ever tested, with cost and multiple-testing gates), and optimizer (opus: minimises expected calendar days to a funded prop account), plus the ask-trade-guidance skill: answers trading questions from a multi-page All-In-One ICT guide.",
+  "version": "0.6.1",
   "author": {
     "name": "Nikko"
   }

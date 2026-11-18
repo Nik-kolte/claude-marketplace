@@ -25,6 +25,10 @@ deployed at all.
   survival: a lower pass rate is tradeable, a higher breach rate is not. Reports "not reachable"
   rather than manufacturing a fast-looking breach.
 
+- `skills/ask-trade-guidance/` — run `/trading:ask-trade-guidance <question>`. Answers trading questions from the All-In-One ICT
+  Trading Guide in `references/`, a 12-page playbook built from Jesse Rogers' two-hour ICT course: foundations, reading price, key
+  levels, confirmation, the core and scalping models, worked trades, daily routine, risk, mindset, cheat sheets and rulings.
+
 ## Requirements
 
 **tv-analyst** needs TradingView Desktop running with CDP on port 9222. Launch via the repo's
