@@ -104,10 +104,13 @@ Once approved, update the repo's docs to reflect the decision **before implement
   (HTML mockup, exported design), ask the human: "can this ship as-is rather than be re-implemented as
   components?" Record the answer as a locked decision. Note any mockup behaviour coupled across regions
   (e.g. focus state driving a scene) so the batch list anticipates a client wrapper.
-- **Mockup sign-off.** Every mockup (by `engineering:ui-designer`) is shown at the three laptop sizes
-  (13" 1280×800, 15.6" 1536×864, 24" 1920×1080; a phone version only when the human asks), and the states that change on
-  interaction. Shipped-as-is or pixel-matched means bugs ship verbatim, so the bar is the same. Any UI
-  batch whose mockup isn't signed off yet is listed as a pre-flight item with its needed-by batch.
+- **Mockup sign-off.** Every mockup (by `engineering:ui-designer`) is shown at the rendered viewport(s)
+  (default 1536 × 864; all three sizes 1280 × 800 / 1536 × 864 / 1920 × 1080 when the brief or layout
+  uncertainty warrants it; phone 390 × 844 only when asked), and the states that change on interaction.
+  Shipped-as-is or pixel-matched means bugs ship verbatim, so the bar is the same. Any UI batch whose
+  mockup isn't signed off yet is listed as a pre-flight item with its needed-by batch. **Sign-off (P1)
+  requires a mockup-vs-spec diff table** — for each section, list what the mockup shows versus what the
+  spec says; unresolved contradictions block sign-off until the human resolves them.
 - **Source-of-truth artifacts are committed before the batch that copies them.** If an acceptance
   criterion says "byte-identical to X", X must be a committed blob (path + commit sha in the task); make
   "commit the signed-off artifacts" Batch 0's last step.

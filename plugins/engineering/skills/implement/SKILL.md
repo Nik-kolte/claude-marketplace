@@ -156,6 +156,10 @@ Read `plan.md` (optionally have **`engineering:architect`** verify it against th
 - **Deviates / introduces a new decision:** **STOP and bring it to the human.** Present the deviation and
   the options; get their call before any code is written. This is the standing rule — anything that changes
   the approved plan is the human's gate.
+- **Migration pre-flight:** if any batch in the plan adds a Prisma migration, list it as a Gate A item:
+  the human must OK a `prisma migrate deploy` against the shared dev DB before that batch starts, and no
+  live regression pass runs for that batch until the migration is confirmed applied. Record the confirmed
+  date in the worklog Open gates line.
 
 ## Step 4 — Dev ↔ Reviewer loop (serial tier)
 
@@ -169,6 +173,10 @@ reread every prior round:
    and returns `DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_MOCKUP`. On `NEEDS_MOCKUP`, dispatch
    `engineering:ui-designer` with the developer's brief, get the human's sign-off, then resume the
    developer on the approved sections (other batches keep moving meanwhile).
+   **On the first round of each batch**, after pushing the branch, the developer runs **only the new
+   regression spec(s) introduced by this batch** (API areas only on a branch preview — see CLAUDE.md)
+   before handing off to the reviewer. Script/test-infrastructure faults found in that run are the
+   developer's own fix round, not a reviewer finding.
 2. Generate the diff (against the pre-change baseline) into the working dir — this is your bookkeeping.
 3. Dispatch **`engineering:reviewer`** (model: `opus` — judgment) with the diff + `plan.md` path. It writes
    `review-N.md` and a worklog entry itself, and returns a verdict: **APPROVE** / **APPROVE-WITH-NITS** /

@@ -22,6 +22,10 @@ The orchestrator gives you a **mockup brief** (what to show, why, which page/rou
 locked, open questions) plus `profile.md`, the `worklog.md` Status block and a `retro.md` path. Read those
 first; do not re-run project discovery.
 
+**Existing-page rule:** when the brief changes an existing page, start from a **literal copy of the most
+recent signed-off mockup** for that page (find it in the repo's mockup folder). Change only what the brief
+names; leave the rest pixel-identical to the signed-off file.
+
 Then build your **theme read**, or reuse it if `profile.md` already has a "UI theme" block (trust it, append
 only gaps, dated):
 1. **Token source:** the real design tokens (e.g. Tailwind `@theme` in `globals.css`, CSS custom properties,
@@ -31,29 +35,37 @@ only gaps, dated):
    classes they use. The mockup must include this shell, at the real widths, unless the brief is for a
    standalone surface (login, landing, a popup shown alone).
 4. **Component vocabulary:** the existing buttons, inputs, selects, pills, cards, tables, dialogs, empty
-   states and their class strings. Grep for them; don't invent a new button when one exists.
+   states and their class strings. Read markup via `git show <base>:<path>` for the specific component file
+   the brief touches; don't grep broadly or invent a new button when one exists.
 5. **Prior mockups:** the repo's mockup folder (the repo's docs say where). Reuse any shared mockup CSS/kit
    and the conventions of the most recent signed-off mockup.
 6. **The live page, when one exists:** if the brief changes an existing page and a deployed environment is
-   listed in `profile.md`, screenshot the current page at 1536×864 as the "Before" reference. Use only the
-   test credentials and test tenant that `profile.md` names, and only read; never change data.
+   listed in `profile.md`, take **one** screenshot at 1536×864 as the "Before" reference. Use only the test
+   credentials and test tenant that `profile.md` names, and only read; never change data.
 
 Append the theme read to `profile.md` under "UI theme" (paths, not copied values) so the next dispatch
 starts warm.
 
-## 1. Load the design skills
+## 1. Design judgment rules (inline)
 
-- Invoke the **`design-taste-frontend`** skill (Skill tool). If the Skill tool can't load it, find and read
-  its `SKILL.md` (`~/.claude/skills/design-taste-frontend/` or the repo's `.claude/skills/`). It is long:
-  for product/app UI read §0 (brief inference), §4 (design engineering directives, including 4.5 states,
-  4.6 forms, 4.7 layout discipline, 4.11 theme lock), §6 (accessibility guardrails), §9 (AI tells),
-  §11 (redesign protocol) and §14 (pre-flight). Read it in full only for a landing or marketing page.
-- **How the skill applies here:** this is almost always a *redesign-preserve* job inside an existing
-  product, so §11's preservation rules win. The skill's aesthetic choices (dials, design-system map,
-  motion, fonts, palettes) never override the project's theme. Use the skill for judgment: hierarchy,
-  spacing rhythm, states, density, copy and content realism, avoiding AI tells, and the pre-flight check.
-- Optionally load `frontend-design:frontend-design` for a new surface with no existing pattern, and
-  `artifact-design` before publishing an Artifact.
+Apply these six rules on every mockup; no external skill load needed for a product/app page:
+
+1. **Preserve first.** This is almost always a *redesign-preserve* job: change only what the brief names.
+   Hierarchy, spacing, density and component styles match neighbouring pages exactly.
+2. **States, not sketches.** Show every interaction state the brief touches: hover, focus-visible,
+   active/selected, disabled, loading, empty, error/validation, long-content overflow. Dialogs and
+   popovers are shown open, over the real page, with the real backdrop.
+3. **Copy discipline.** Short, specific, sentence case unless the app differs. No lorem ipsum, no
+   "John Doe", no round placeholder numbers. Use a long realistic value that wraps or truncates.
+4. **Avoid AI tells.** No gratuitous gradients, glass morphism, glow effects or emoji in UI copy.
+   No decorative icons that add noise instead of meaning.
+5. **Accessible.** Text contrast >= 4.5:1 (>= 3:1 large text / UI boundaries). Visible focus rings.
+   Hit targets >= 24x24 px. Colour is never the only signal. Labels on every input.
+6. **Pre-flight.** Before handing over: one clear primary action per view, aligned edges, no 1-3 px
+   stray offsets, consistent spacing from the theme scale, same density as the adjacent pages.
+
+For a new, standalone surface (landing, marketing) where the existing product patterns do not apply,
+optionally invoke `frontend-design:frontend-design` for broader aesthetic guidance.
 
 ## 2. Non-negotiables
 
@@ -68,29 +80,26 @@ starts warm.
 3. **Real-looking content.** Product-realistic names, numbers, units and lengths taken from the domain and
    seed data, including a long value that wraps or truncates and an empty case. No lorem ipsum, no
    "John Doe", no round placeholder numbers.
-4. **Three laptop sizes.** Every page is checked at these CSS viewports (override from
-   `profile.md` if the repo lists its own targets):
+4. **Viewport.** Default to **one viewport: 1536 × 864** (15.6" 1080p at 125%, the most common test
+   size). Render at all three sizes (1280 × 800, 1536 × 864, 1920 × 1080) only when the layout shape
+   is uncertain or the brief explicitly asks for it. No phone version unless the brief or the human asks;
+   when asked, add Phone 390 × 844.
 
-   | Label | Viewport | Typical device |
-   |---|---|---|
-   | 13" laptop | 1280 × 800 | 13" MacBook Air / 13" Windows at 150% |
-   | 15.6" laptop | 1536 × 864 | 15.6" 1080p at the Windows default 125% |
-   | 24" monitor | 1920 × 1080 | 24" 1080p at 100% |
-
-   **No phone version unless the brief or the human asks for one.** When asked, add Phone 390 × 844.
-
-   The layout must hold at every width: no horizontal scroll, no clipped text, no orphaned columns, nothing
-   that only works at the width you happened to design at.
+   The layout must hold at every width rendered: no horizontal scroll, no clipped text, no orphaned
+   columns, nothing that only works at the width you designed at.
 5. **Every state that changes.** Default, hover, focus-visible, active/selected, disabled, loading, empty,
    error/validation, and long-content overflow, for each control the brief touches. Dialogs and popovers
    shown open, over the real page, with the real backdrop.
 6. **Accessible by default.** Text contrast ≥ 4.5:1 (≥ 3:1 for large text and UI boundaries), visible
    focus rings, hit targets ≥ 24×24 px (aim for 40+ on primary actions), labels on every input, colour
    never the only signal. Check contrast against the actual token values, not by eye.
-7. **Built to port.** Use the same class vocabulary as the real components (for a Tailwind repo, use the
-   Tailwind v4 browser build pinned to the repo's major version with the repo's `@theme` block inlined, so
-   the developer can lift class strings unchanged). Keep the file lean: fonts by URL or the app's own font
-   files, never inline base64, no minified or multi-KB lines, no client logic beyond simple state toggles.
+7. **Built to port — hard limits:**
+   - Use the same class vocabulary as the real components (for a Tailwind repo, use the Tailwind v4
+     browser build pinned to the repo's major version with the repo's `@theme` block inlined, so the
+     developer can lift class strings unchanged).
+   - **No inline base64** (images or fonts). Load fonts by CDN URL or the app's own font files only.
+   - **No file over 500 lines.** Split into sections with anchored nav if needed.
+   - No minified or multi-KB lines, no client logic beyond simple state toggles.
 
 ## 3. Deliverables
 
@@ -108,13 +117,14 @@ the repo's naming convention:
   theme. Mark your recommendation and say in one line per option what it is better and worse at. Locked
   parts are drawn once and shared by every option. Say in the return which parts were locked and which
   got options.
-- **`<name>.viewer.html`** (optional, for multi-size review) — loads `<name>.html` in iframes at exact
-  1280/1536/1920 widths (plus 390 only if a phone version was asked for), scaled to fit side by side or behind size tabs, so the human compares sizes in
-  one place.
-- **Screenshots** — render each page at the viewports in §2.4 with Playwright and save them next to
-  the mockup (or in the repo's scratch folder for throwaway rounds). Serve the folder with a throwaway
-  static server on a free port (e.g. `npx http-server -p <port> -s`), and **stop it before you return**.
-  Look at every screenshot yourself before you hand it over; fix what you would reject.
+- **`<name>.viewer.html`** (optional, only when multi-size is rendered) — loads `<name>.html` in iframes
+  at the rendered widths (1280/1536/1920, plus 390 only if a phone version was asked for), scaled to fit
+  side by side or behind size tabs, so the human compares sizes in one place.
+- **Screenshots** — render at the viewport(s) produced (§2.4: default 1536 × 864; all three if the brief
+  asked for them) with Playwright and save them next to the mockup (or in the repo's scratch folder for
+  throwaway rounds). Serve the folder with a throwaway static server on a free port
+  (e.g. `npx http-server -p <port> -s`), and **stop it before you return**. Look at every screenshot
+  yourself before you hand it over; fix what you would reject.
 - **Artifact** — publish `<name>.html` (or the viewer) as an Artifact when the brief asks for it or when
   the human can't open local files, and return the link.
 - Commit the mockup files if the repo's docs rules say docs are committed directly (cite the sha);
@@ -122,7 +132,7 @@ the repo's naming convention:
 
 ## 4. Before you hand over: the design QA
 
-Run the `design-taste-frontend` pre-flight (§14) plus this list, at every viewport in §2.4:
+Run the §1 pre-flight (rule 6) plus this list, at every viewport rendered:
 
 - Visual hierarchy: one clear primary action per view; heading levels and weights match existing pages.
 - Spacing: values come from the theme's scale; consistent rhythm; aligned edges; no 1–3 px stray offsets.
